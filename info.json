@@ -1,0 +1,14 @@
+{
+  "name": "valves",
+  "version": "0.1.0",
+  "title": "Valves",
+  "description": "Valves for pipes. Includes overflow and top-up valves and fully configurable.",
+  "author": "stringweasel",
+  "factorio_version": "2.0",
+  "dependencies": [ 
+    "base >= 2.0.6"
+  ],
+  "package":{
+    "ignore":[ "*.md", "*.zip", "mod-page/*" ]
+  }
+}
