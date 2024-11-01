@@ -68,8 +68,8 @@ data:extend{
           pipe_covers = pipecoverspictures(),
           pipe_connections =
           {
-            { direction = defines.direction.north, position = {0, -0.5}, flow_direction = "output" },
-            { direction = defines.direction.south, position = {0, 0.5}, flow_direction = "input" }
+            {connection_type = "linked", direction = defines.direction.north, position = {0, -0.4}, flow_direction = "output", linked_connection_id=31113 + 1 },
+            {connection_type = "linked", direction = defines.direction.south, position = {0, 0.4}, flow_direction = "input", linked_connection_id=31113 - 1 }
           }
         },
         energy_source =

@@ -20,6 +20,22 @@ end
 --- LOGIC -------------------------------------------------
 -----------------------------------------------------------
 
+---@param this LuaEntity
+---@param that LuaEntity
+---@return boolean
+local function has_linked_pipe_connection(this, that)
+    for index=1,#this.fluidbox do
+        for _, connection in pairs(this.fluidbox.get_pipe_connections(index)) do
+            if connection.connection_type == "linked" and connection.target then
+                if connection.target.owner == that then
+                    return true
+                end
+            end
+        end
+    end
+    return false
+end
+
 ---@param entity LuaEntity
 ---@return LuaEntity? valve
 local function find_connected_valve(entity)
@@ -117,9 +133,29 @@ end
 
 ---@param valve LuaEntity
 local function handle_valve_creation(valve)
-    local input_guage = try_create_guage(valve, "input")
+    local input_guage = valve.surface.create_entity{
+        name = "configurable-valve-guage-input",
+        position = valve.position,
+        force = valve.force,
+        direction = valve.direction,
+    }
+    assert(input_guage)
+    input_guage.fluidbox.add_linked_connection(31113, valve, 31113-1)
+    assert(has_linked_pipe_connection(valve, input_guage))
+
+    local output_guage = valve.surface.create_entity{
+        name = "configurable-valve-guage-output",
+        position = valve.position,
+        force = valve.force,
+        direction = valve.direction,
+    }
+    assert(output_guage)
+    output_guage.fluidbox.add_linked_connection(31113, valve, 31113+1)
+    assert(has_linked_pipe_connection(valve, output_guage))
+
+    -- local input_guage = try_create_guage(valve, "input")
     create_hidden_combinator(valve, input_guage, true)
-    local output_guage = try_create_guage(valve, "output")
+    -- local output_guage = try_create_guage(valve, "output")
     create_hidden_combinator(valve, output_guage, false)
 end
 
