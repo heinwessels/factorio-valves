@@ -3,13 +3,47 @@ local item_tints = require("__base__.prototypes.item-tints")
 local hit_effects = require("__base__.prototypes.entity.hit-effects")
 local sounds = require("__base__.prototypes.entity.sounds")
 
+---@type data.TechnologyPrototype?
+local tech_to_unlock
+for _, technology in pairs(data.raw.technology) do
+    if technology.effects then			
+        for index, effect in pairs(technology.effects) do
+            if effect.type == "unlock-recipe" then
+                if effect.recipe == "pump" then
+                  tech_to_unlock = technology
+                  table.insert(tech_to_unlock.effects, index, {
+                    type = "unlock-recipe",
+                    recipe = "configurable-valve"
+                  })
+                  break
+                end
+            end
+        end
+        if tech_to_unlock then break end
+    end
+end
+
+---@type data.IngredientPrototype?
+local ingredients
+for _, recipe in pairs(data.raw.recipe) do
+  for _, result in pairs(recipe.results or { }) do
+      if result.type == "item" then
+          if result.name == "pump" then
+            ingredients = recipe.ingredients
+            break
+          end
+      end
+  end
+  if ingredients then break end
+end
+
 data:extend{
     {
       type = "item",
       name = "configurable-valve",
-      icon = "__base__/graphics/icons/pump.png",
+      icon = "__configurable-valves__/graphics/configurable-valve/icon.png",
       subgroup = "energy-pipe-distribution",
-      order = "b[pipe]-c[pump]",
+      order = "b[pipe]-d[configurable-valve]",
       inventory_move_sound = item_sounds.fluid_inventory_move,
       pick_sound = item_sounds.fluid_inventory_pickup,
       drop_sound = item_sounds.fluid_inventory_move,
@@ -21,28 +55,23 @@ data:extend{
       type = "recipe",
       name = "configurable-valve",
       energy_required = 2,
-      enabled = false,
-      ingredients =
-      {
-        {type = "item", name = "engine-unit", amount = 1},
-        {type = "item", name = "steel-plate", amount = 1},
-        {type = "item", name = "processing-unit", amount = 5},
-        {type = "item", name = "pipe", amount = 1}
-      },
+      enabled = tech_to_unlock == nil,
+      ingredients = ingredients,
       results = {{type="item", name="configurable-valve", amount=1}}
     },
     {
         type = "pump",
         name = "configurable-valve",
-        icon = "__base__/graphics/icons/pump.png",
+        icon = "__configurable-valves__/graphics/configurable-valve/icon.png",
         flags = {"placeable-neutral", "player-creation"},
+        factoriopedia_description = {"", {"entity-description.configurable-valve"}, {"configurable-valves.extended-description"}},
         minable = {mining_time = 0.2, result = "configurable-valve"},
         max_health = 180,
         fast_replaceable_group = "pipe",
         corpse = "pump-remnants",
         dying_explosion = "pump-explosion",
-        collision_box = {{-0.29, -0.9}, {0.29, 0.9}},
-        selection_box = {{-0.5, -1}, {0.5, 1}},
+        collision_box = {{-0.29, -0.45}, {0.29, 0.45}},
+        selection_box = {{-0.5, -0.5}, {0.5, 0.5}},
         icon_draw_specification = {scale = 0.5},
         working_sound =
         {
@@ -68,16 +97,11 @@ data:extend{
           pipe_covers = pipecoverspictures(),
           pipe_connections =
           {
-            {connection_type = "linked", direction = defines.direction.north, position = {0, -0.4}, flow_direction = "output", linked_connection_id=31113 + 1 },
-            {connection_type = "linked", direction = defines.direction.south, position = {0, 0.4}, flow_direction = "input", linked_connection_id=31113 - 1 }
+            {connection_type = "linked", flow_direction = "output", linked_connection_id=31113 + 1 },
+            {connection_type = "linked", flow_direction = "input", linked_connection_id=31113 - 1 }
           }
         },
-        energy_source =
-        {
-          type = "electric",
-          usage_priority = "secondary-input",
-          drain = "1kW"
-        },
+        energy_source = { type = "void" },
         energy_usage = "29kW",
         pumping_speed = 20,
         impact_category = "metal",
@@ -88,132 +112,52 @@ data:extend{
         {
           north =
           {
-            filename = "__base__/graphics/entity/pump/pump-north.png",
-            width = 103,
-            height = 164,
-            scale = 0.5,
-            line_length =8,
-            frame_count =32,
-            animation_speed = 0.5,
-            shift = util.by_pixel(8, 3.5)
-          },
-          east =
-          {
-            filename = "__base__/graphics/entity/pump/pump-east.png",
-            width = 130,
-            height = 109,
-            scale = 0.5,
-            line_length =8,
-            frame_count =32,
-            animation_speed = 0.5,
-            shift = util.by_pixel(-0.5, 1.75)
-          },
-
-          south =
-          {
-            filename = "__base__/graphics/entity/pump/pump-south.png",
-            width = 114,
-            height = 160,
-            scale = 0.5,
-            line_length =8,
-            frame_count =32,
-            animation_speed = 0.5,
-            shift = util.by_pixel(12.5, -8)
-          },
-          west =
-          {
-            filename = "__base__/graphics/entity/pump/pump-west.png",
-            width = 131,
-            height = 111,
-            scale = 0.5,
-            line_length =8,
-            frame_count =32,
-            animation_speed = 0.5,
-            shift = util.by_pixel(-0.25, 1.25)
-          }
-        },
-
-        fluid_animation =
-        {
-          north =
-          {
-            filename = "__base__/graphics/entity/pump/pump-north-liquid.png",
-            apply_runtime_tint = true,
-            width = 38,
-            height = 22,
-            scale = 0.5,
-            line_length =8,
-            frame_count =32,
-            shift = util.by_pixel(-0.250, -16.750)
-          },
-
-          east =
-          {
-            filename = "__base__/graphics/entity/pump/pump-east-liquid.png",
-            width = 35,
-            height = 46,
-            scale = 0.5,
-            line_length =8,
-            frame_count =32,
-            shift = util.by_pixel(6.25, -8.5)
-          },
-
-          south =
-          {
-            filename = "__base__/graphics/entity/pump/pump-south-liquid.png",
-            width = 38,
-            height = 45,
-            scale = 0.5,
-            line_length =8,
-            frame_count =32,
-            shift = util.by_pixel(0.5, -9.25)
-          },
-          west =
-          {
-            filename = "__base__/graphics/entity/pump/pump-west-liquid.png",
-            width = 35,
-            height = 47,
-            scale = 0.5,
-            line_length =8,
-            frame_count =32,
-            shift = util.by_pixel(-6.5, -9.5)
-          }
-        },
-
-        glass_pictures =
-        {
-          north =
-          {
-            filename = "__base__/graphics/entity/pump/pump-north-glass.png",
-            width = 64,
-            height = 128,
-            scale = 0.5
-          },
-          east =
-          {
-            filename = "__base__/graphics/entity/pump/pump-east-glass.png",
+            filename = "__configurable-valves__/graphics/configurable-valve/north.png",
             width = 128,
-            height = 192,
-            scale = 0.5
+            height = 128,
+            scale = 0.5,
+            line_length = 1,
+            frame_count = 1,
+            animation_speed = 1,
+          },
+          east =
+          {
+            filename = "__configurable-valves__/graphics/configurable-valve/east.png",
+            width = 128,
+            height = 128,
+            scale = 0.5,
+            line_length = 1,
+            frame_count = 1,
+            animation_speed = 1,
           },
           south =
           {
-            filename = "__base__/graphics/entity/pump/pump-south-glass.png",
-            width = 64,
+            filename = "__configurable-valves__/graphics/configurable-valve/south.png",
+            width = 128,
             height = 128,
-            scale = 0.5
+            scale = 0.5,
+            line_length = 1,
+            frame_count = 1,
+            animation_speed = 1,
           },
           west =
           {
-            filename = "__base__/graphics/entity/pump/pump-west-glass.png",
-            width = 192,
-            height = 192,
+            filename = "__configurable-valves__/graphics/configurable-valve/west.png",
+            width = 128,
+            height = 128,
             scale = 0.5,
-            shift = util.by_pixel(-16, 0)
+            line_length = 1,
+            frame_count = 1,
+            animation_speed = 1,
           }
         },
 
-        circuit_connector = circuit_connector_definitions["pump"],
+        circuit_connector = circuit_connector_definitions.create_vector(universal_connector_template, {
+          { variation = 24, main_offset = util.by_pixel(-15/2-3, -8.5/2), shadow_offset = util.by_pixel(0, -0.5), show_shadow = false },
+          { variation = 26, main_offset = util.by_pixel(13.5/2, 4.5/2), shadow_offset = util.by_pixel(-7, -12.5), show_shadow = true },
+          { variation = 24, main_offset = util.by_pixel(-14.5/2-3, -8.5/2), shadow_offset = util.by_pixel(-12.5, 6), show_shadow = false },
+          { variation = 26, main_offset = util.by_pixel(-16/2, 3.5/2), shadow_offset = util.by_pixel(-14, 13.5), show_shadow = true },
+        }),
         circuit_wire_max_distance = default_circuit_wire_max_distance
     },
 }

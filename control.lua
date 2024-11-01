@@ -1,9 +1,23 @@
 -- Open GUI of hidden combinator
 -- /c local c = game.surfaces[1].find_entities_filtered{name="valves-tiny-combinator-input"}[1]; assert(c); game.player.opened = c
 
+local debug = false
+
 local signal_each = { type = 'virtual', name = 'signal-each' }
 local signal_input = { type = "virtual", name="signal-I" }
 local signal_output = { type = "virtual", name="signal-O" }
+
+---@param valve LuaEntity
+local function set_defualt_behaviour(valve)
+    local control_behaviour = valve.get_or_create_control_behavior()
+    ---@cast control_behaviour LuaPumpControlBehavior
+    control_behaviour.circuit_enable_disable = true
+    control_behaviour.circuit_condition = {
+        comparator = '>',
+        first_signal = signal_input,
+        constant = 80,
+    }
+end
 
 -----------------------------------------------------------
 --- LOGIC -------------------------------------------------
@@ -68,8 +82,9 @@ local function handle_valve_creation(valve)
         direction = valve.direction,
     }
     assert(input_guage)
+    input_guage.destructible = false
     input_guage.fluidbox.add_linked_connection(31113, valve, 31113-1)
-    assert(has_linked_pipe_connection(valve, input_guage))
+    if debug then assert(has_linked_pipe_connection(valve, input_guage)) end
 
     local output_guage = valve.surface.create_entity{
         name = "configurable-valve-guage-output",
@@ -78,11 +93,14 @@ local function handle_valve_creation(valve)
         direction = valve.direction,
     }
     assert(output_guage)
+    output_guage.destructible = false
     output_guage.fluidbox.add_linked_connection(31113, valve, 31113+1)
-    assert(has_linked_pipe_connection(valve, output_guage))
+    if debug then assert(has_linked_pipe_connection(valve, output_guage)) end
 
     create_hidden_combinator(valve, input_guage, true)
     create_hidden_combinator(valve, output_guage, false)
+
+    set_defualt_behaviour(valve)
 end
 
 ---@param valve LuaEntity
@@ -121,6 +139,8 @@ local function on_entity_created(event)
     local entity = event.entity
     if entity.name == "configurable-valve" then
         handle_valve_creation(entity)
+    elseif entity.name == "entity-ghost" and entity.ghost_name == "configurable-valve" then
+        set_defualt_behaviour(entity)
     end
 end
 

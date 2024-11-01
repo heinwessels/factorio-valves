@@ -1,8 +1,8 @@
 {
-  "name": "valves",
+  "name": "configurable-valves",
   "version": "0.1.0",
-  "title": "Valves",
-  "description": "Valves for pipes. Includes overflow and top-up valves and fully configurable.",
+  "title": "Configurable Valves",
+  "description": "Configurable valves for pipes. Allows for overflow, top-up and passthrough valves, just like Flow Control. Fully configurable with custom levels, and connectable to the circuit network.",
   "author": "stringweasel",
   "factorio_version": "2.0",
   "dependencies": [ 
