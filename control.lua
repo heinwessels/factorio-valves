@@ -51,6 +51,7 @@ local function create_hidden_combinator(valve, guage, is_input)
         create_build_effect_smoke = false
     }
     assert(combinator)
+    combinator.destructible = false
 
     local behaviour = combinator.get_or_create_control_behavior() --[[@as LuaArithmeticCombinatorControlBehavior ]]
     behaviour.parameters = {
