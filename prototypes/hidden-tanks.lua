@@ -1,13 +1,13 @@
 local function get_pipe_connections(is_input)
     if is_input then
         return {
-            { direction = defines.direction.north,                              position = {0, -0.6 - 0.1}, flow_direction = "input-output" },
-            { connection_type = "linked", direction = defines.direction.south,  position = {0, -0.6 + 0.1}, flow_direction = "input-output", linked_connection_id=31113 }
+            { direction = defines.direction.north,                              position = {0, -0.5}, flow_direction = "input-output" },
+            { connection_type = "linked", flow_direction = "input-output", linked_connection_id=31113 }
         }
     else
         return {
-            { connection_type = "linked", direction = defines.direction.north,  position = {0, 0.6 - 0.1}, flow_direction = "input-output", linked_connection_id=31113 },
-            { direction = defines.direction.south,                              position = {0, 0.6 + 0.1}, flow_direction = "input-output" }
+            { connection_type = "linked", flow_direction = "input-output", linked_connection_id=31113 },
+            { direction = defines.direction.south,                              position = {0, 0.5}, flow_direction = "input-output" }
         }
     end
 end
@@ -26,7 +26,6 @@ local function create_hidden_tank(name, is_input)
                 "not-flammable",
                 "not-upgradable",
                 "not-in-kill-statistics",
-                "hide-alt-info",
                 "placeable-off-grid" -- To be directly above pump position
             },
             selectable_in_game = false,
@@ -37,9 +36,8 @@ local function create_hidden_tank(name, is_input)
             {
                 volume = 100,
                 pipe_connections = get_pipe_connections(is_input),
-                -- hide_connection_info = true
+                hide_connection_info = true,
             },
-            selectable_in_game = false,
             show_fluid_icon = false,
             two_direction_only = true,
             window_bounding_box = {{0,0}, {0,0}},

@@ -5,17 +5,6 @@ local signal_each = { type = 'virtual', name = 'signal-each' }
 local signal_input = { type = "virtual", name="signal-I" }
 local signal_output = { type = "virtual", name="signal-O" }
 
----@type table<string, boolean>
-local entity_has_fluidbox = { }
-for name, prototype in pairs(prototypes.entity) do
-    if name == "configurable-valve" then goto continue end
-    if not next(prototype.fluidbox_prototypes) then goto continue end
-
-    entity_has_fluidbox[name] = true
-
-    ::continue::
-end
-
 -----------------------------------------------------------
 --- LOGIC -------------------------------------------------
 -----------------------------------------------------------
@@ -34,53 +23,6 @@ local function has_linked_pipe_connection(this, that)
         end
     end
     return false
-end
-
----@param entity LuaEntity
----@return LuaEntity? valve
-local function find_connected_valve(entity)
-    for index=1,#entity.fluidbox do
-        for _, connection in pairs(entity.fluidbox.get_pipe_connections(index)) do
-            local target = connection.target
-            if target and target.owner.name == "configurable-valve" then
-                return target.owner
-            end
-        end
-    end
-end
-
----@param valve LuaEntity
----@param direction "input" | "output"
----@return LuaEntity? guage
-local function find_connectable(valve, direction)
-    for _, connection in pairs(valve.fluidbox.get_pipe_connections(1)) do
-        if connection.flow_direction ~= direction then goto continue end
-        local target = connection.target
-        if target then
-            return target.owner
-        end
-        ::continue::
-    end
-end
-
----@param valve LuaEntity
----@param direction "input" | "output"
----@return LuaEntity? guage
-local function try_create_guage(valve, direction)
-    local connectable = find_connectable(valve, direction)
-    if not connectable then return end
-
-    -- We place the guage either on the input pipe, or on the valve.
-    -- Never on the output pipe. This makes finding them easy.
-    local guage = connectable.surface.create_entity{
-        name = "valves-hidden-tank",
-        position = direction == "input" and connectable.position or valve.position,
-        force = connectable.force,
-        create_build_effect_smoke = false
-    }
-    assert(guage)
-    connectable.fluidbox.add_linked_connection(0xdeadbeef, guage, 0xdeadbeef)
-    return guage
 end
 
 ---@param valve LuaEntity
@@ -117,20 +59,6 @@ local function create_hidden_combinator(valve, guage, is_input)
     return combinator_output_connector
 end
 
----@param entity LuaEntity
-local function handle_connectable_creation(entity)
-    local valve = find_connected_valve(entity)
-    if valve then
-        local input_guage = try_create_guage(valve, "input")
-        create_hidden_combinator(valve, input_guage, true)
-    end
-
-end
-
----@param entity LuaEntity
-local function handle_connectable_destroyed(entity)
-end
-
 ---@param valve LuaEntity
 local function handle_valve_creation(valve)
     local input_guage = valve.surface.create_entity{
@@ -153,22 +81,36 @@ local function handle_valve_creation(valve)
     output_guage.fluidbox.add_linked_connection(31113, valve, 31113+1)
     assert(has_linked_pipe_connection(valve, output_guage))
 
-    -- local input_guage = try_create_guage(valve, "input")
     create_hidden_combinator(valve, input_guage, true)
-    -- local output_guage = try_create_guage(valve, "output")
     create_hidden_combinator(valve, output_guage, false)
 end
 
 ---@param valve LuaEntity
 local function handle_valve_destroyed(valve)
-    local output_gauge = valve.surface.find_entity("valves-hidden-tank", valve.position)
-    if output_gauge then output_gauge.destroy() end
-    local connectable = find_connectable(valve, "input")
-    if connectable then
-        local input_guage = connectable.surface.find_entity("valves-hidden-tank", connectable.position)
-        if input_guage then input_guage.destroy() end
+    for _, name in pairs{
+        "configurable-valve-guage-input",
+        "configurable-valve-guage-output",
+        "valves-tiny-combinator-input",
+        "valves-tiny-combinator-output",
+    } do
+        local entity = valve.surface.find_entity(name, valve.position)
+        if entity then entity.destroy() end
     end
 end
+
+---@param event EventData.on_player_rotated_entity
+script.on_event(defines.events.on_player_rotated_entity, function(event)
+    ---@TODO This doesn't work yet
+    local valve = event.entity
+    if valve.name ~= "configurable-valve" then return end
+    for _, name in pairs{
+        "configurable-valve-guage-input",
+        "configurable-valve-guage-output",
+    } do
+        local entity = valve.surface.find_entity(name, valve.position)
+        if entity then entity.direction = valve.direction end
+    end
+end)
 
 -----------------------------------------------------------
 --- DISPATCHER --------------------------------------------
@@ -179,8 +121,6 @@ local function on_entity_created(event)
     local entity = event.entity
     if entity.name == "configurable-valve" then
         handle_valve_creation(entity)
-    elseif entity_has_fluidbox[entity.name] then
-        handle_connectable_creation(entity)
     end
 end
 
@@ -188,8 +128,6 @@ local function on_entity_destroyed(event)
     local entity = event.entity
     if entity.name == "configurable-valve" then
         handle_valve_destroyed(entity)
-    elseif entity_has_fluidbox[entity.name] then
-        handle_connectable_destroyed(entity)
     end
 end
 
