@@ -19,6 +19,65 @@ local function set_defualt_behaviour(valve)
     control_behaviour.circuit_condition = constants.behaviour.overflow
 end
 
+---@param input "toggle" | "minus" | "plus"
+---@param event EventData.CustomInputEvent
+local function quick_toggle(input, event)
+    local player = game.get_player(event.player_index)
+    if not player then return end
+    local valve = player.selected
+    if not valve then return end
+    if valve.name ~= "configurable-valve" and not (
+        valve.name == "entity-ghost" and valve.ghost_name == "configurable-valve"
+    ) then return end
+
+    ---@type "overflow" | "top_up" | "no_return"?
+    local behaviour_type
+    local control_behaviour = valve.get_or_create_control_behavior()
+    ---@cast control_behaviour LuaPumpControlBehavior
+    local circuit_condition = control_behaviour.circuit_condition --[[@as CircuitCondition]]
+    local first = circuit_condition.first_signal and circuit_condition.first_signal.name
+    local second = circuit_condition.second_signal and circuit_condition.second_signal.name
+    local constant = circuit_condition.constant or 0
+    if first == "signal-I" and not second and circuit_condition.comparator == ">" then
+        behaviour_type = "overflow"
+    elseif first == "signal-O" and not second and circuit_condition.comparator == "<" then
+        behaviour_type = "top_up"
+    elseif first == "signal-I" and second == "signal-O" and circuit_condition.comparator == ">" then
+        behaviour_type = "no_return"
+    end
+
+    if input == "toggle" then
+        local new_behaviour_type = behaviour_type and next(constants.behaviour, behaviour_type)
+        if not new_behaviour_type then
+            new_behaviour_type = next(constants.behaviour)
+        end
+        behaviour_type = new_behaviour_type
+        control_behaviour.circuit_condition = constants.behaviour[behaviour_type]
+        constant = control_behaviour.circuit_condition.constant
+    else
+        if not behaviour_type or behaviour_type == "no_return" then
+            player.create_local_flying_text{text = {"configurable-valves.config-not-supported"}, create_at_cursor=true}
+            return
+        end
+        constant = (math.floor(constant/10)*10) + (10 * (input == "plus" and 1 or -1 ))
+        constant = math.min(100, math.max(0, constant))
+        circuit_condition.constant = constant
+        control_behaviour.circuit_condition = circuit_condition
+    end
+
+    valve.create_build_effect_smoke()
+    local msg = {"", {"configurable-valves."..behaviour_type}}
+    if constant then table.insert(msg, ": "..tostring(constant).."%") end
+    player.create_local_flying_text{text = msg, position = valve.position, speed = 30}
+end
+for input, custom_input in pairs({
+    toggle = "configurable-valves-switch",
+    minus = "configurable-valves-minus",
+    plus = "configurable-valves-plus",
+}) do
+    script.on_event(custom_input, function(e) quick_toggle(input, e) end)
+end
+
 -----------------------------------------------------------
 --- LOGIC -------------------------------------------------
 -----------------------------------------------------------

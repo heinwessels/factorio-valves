@@ -1,7 +1,7 @@
 local constants = { }
 
 constants.signal = {
-    each =      { type = 'virtual', name = 'signal-each' },
+    each =      { type = 'virtual', name = "signal-each" },
     input =     { type = "virtual", name = "signal-I" },
     output =    { type = "virtual", name = "signal-O" },
 }

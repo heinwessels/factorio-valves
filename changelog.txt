@@ -1,4 +1,11 @@
 ---------------------------------------------------------------------------------------------------
+Version: 0.1.2
+Date: ??.11.2024
+  Features:
+    - Added easy configuring of valves using keyboard shortcuts. Keys are configurable.
+      - Ctrl+R switches between overflow, top-up and no-return.
+      - Numpad +/- changes the threshold in 10% increments.
+---------------------------------------------------------------------------------------------------
 Version: 0.1.1
 Date: 02.11.2024
   Compatibility:
