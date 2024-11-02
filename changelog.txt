@@ -2,7 +2,8 @@
 Version: 0.1.1
 Date: 2.11.2024
   Bugfixes:
-    - Fixed valve forcing the max pipeline extent to the default 320. 
+    - Fixed valve forcing the max pipeline extent to the default 320.
+    - Fixed blueprinted valves always defaulting back to overflow valve.
 ---------------------------------------------------------------------------------------------------
 Version: 0.1.0
 Date: 1.11.2024

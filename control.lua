@@ -11,6 +11,12 @@ local signal_output = { type = "virtual", name="signal-O" }
 local function set_defualt_behaviour(valve)
     local control_behaviour = valve.get_or_create_control_behavior()
     ---@cast control_behaviour LuaPumpControlBehavior
+
+    if control_behaviour.circuit_enable_disable then
+        -- This valve's condition has already been set. Don't overwrite it.
+        return
+    end
+
     control_behaviour.circuit_enable_disable = true
     control_behaviour.circuit_condition = {
         comparator = '>',
