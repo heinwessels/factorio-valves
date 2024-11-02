@@ -7,6 +7,7 @@ Configurable valves for your fluids. Allows for overflow, top-up and passthrough
 # Compatibility
 
 Should be comptatibile with most mods. If it's not compatible, please let me know.
+    - **Pyanodons**: Will automatically migrate old Factorio 1.1 valves to their 2.0 counter part.
 
 Other mods can also define their own configurable valves. TODO.
 

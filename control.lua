@@ -3,9 +3,7 @@
 
 local debug = false
 
-local signal_each = { type = 'virtual', name = 'signal-each' }
-local signal_input = { type = "virtual", name="signal-I" }
-local signal_output = { type = "virtual", name="signal-O" }
+local constants = require("__configurable-valves__.constants")
 
 ---@param valve LuaEntity
 local function set_defualt_behaviour(valve)
@@ -18,11 +16,7 @@ local function set_defualt_behaviour(valve)
     end
 
     control_behaviour.circuit_enable_disable = true
-    control_behaviour.circuit_condition = {
-        comparator = '>',
-        first_signal = signal_input,
-        constant = 80,
-    }
+    control_behaviour.circuit_condition = constants.behaviour.overflow
 end
 
 -----------------------------------------------------------
@@ -61,10 +55,10 @@ local function create_hidden_combinator(valve, guage, is_input)
 
     local behaviour = combinator.get_or_create_control_behavior() --[[@as LuaArithmeticCombinatorControlBehavior ]]
     behaviour.parameters = {
-        first_signal = signal_each,
+        first_signal = constants.signal.each,
         operation = '+',
         second_constant = 0,
-        output_signal = is_input and signal_input or signal_output,
+        output_signal = is_input and constants.signal.input or constants.signal.output,
     }
 
     local combinator_output_connector = combinator.get_wire_connector(defines.wire_connector_id.combinator_output_green, true)
