@@ -8,7 +8,7 @@ local constants = require("__configurable-valves__.constants")
 
 local replace_behaviour = {
     ["py-overflow-valve"]   = { behaviour = constants.behaviour.overflow },
-    ["py-underflow-valve"]  = { behaviour = constants.behaviour.topup,      invert_direction = true },
+    ["py-underflow-valve"]  = { behaviour = constants.behaviour.top_up,     invert_direction = true },
     ["py-check-valve"]      = { behaviour = constants.behaviour.no_return,  invert_direction = true },
 }
 
@@ -35,6 +35,7 @@ for _, surface in pairs(game.surfaces) do
                 local control_behaviour = valve.get_or_create_control_behavior()
                 ---@cast control_behaviour LuaPumpControlBehavior
                 control_behaviour.circuit_enable_disable = true
+                assert(config.behaviour)
                 control_behaviour.circuit_condition = config.behaviour
             end
         end

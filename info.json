@@ -1,6 +1,6 @@
 {
   "name": "configurable-valves",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "title": "Configurable Valves",
   "description": "Configurable valves for pipes. Allows for overflow, top-up and one-way/non-return valves, just like Flow Control. Fully configurable with custom levels, and connectable to the circuit network.",
   "author": "stringweasel",
