@@ -39,6 +39,7 @@ local function create_hidden_tank(name, is_input)
                 pipe_covers = pipecoverspictures(),
                 pipe_connections = get_pipe_connections(is_input),
                 hide_connection_info = is_input == true,
+                max_pipeline_extent = 1000000, -- Big number, nobody would build this big right?
             },
             show_fluid_icon = false,
             window_bounding_box = {{0,0}, {0,0}},
