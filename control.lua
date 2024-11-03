@@ -6,7 +6,7 @@ local debug = false
 local constants = require("__configurable-valves__.constants")
 
 ---@param valve LuaEntity
-local function set_defualt_behaviour(valve)
+local function set_default_valve_type(valve)
     local control_behaviour = valve.get_or_create_control_behavior()
     ---@cast control_behaviour LuaPumpControlBehavior
 
@@ -16,7 +16,7 @@ local function set_defualt_behaviour(valve)
     end
 
     control_behaviour.circuit_enable_disable = true
-    control_behaviour.circuit_condition = constants.behaviour.overflow
+    control_behaviour.circuit_condition = constants.valve_types.overflow
 end
 
 ---@param input "toggle" | "minus" | "plus"
@@ -31,34 +31,38 @@ local function quick_toggle(input, event)
     ) then return end
 
     ---@type "overflow" | "top_up" | "one_way"?
-    local behaviour_type
+    local valve_type
     local control_behaviour = valve.get_or_create_control_behavior()
     ---@cast control_behaviour LuaPumpControlBehavior
     local circuit_condition = control_behaviour.circuit_condition --[[@as CircuitCondition]]
     local first = circuit_condition.first_signal and circuit_condition.first_signal.name
     local second = circuit_condition.second_signal and circuit_condition.second_signal.name
-    local constant = circuit_condition.constant or 0
+    local constant = circuit_condition.constant or 50
     if first == "signal-I" and not second and circuit_condition.comparator == ">" then
-        behaviour_type = "overflow"
+        valve_type = "overflow"
     elseif first == "signal-O" and not second and circuit_condition.comparator == "<" then
-        behaviour_type = "top_up"
+        valve_type = "top_up"
     elseif first == "signal-I" and second == "signal-O" and circuit_condition.comparator == ">" then
-        behaviour_type = "one_way"
+        valve_type = "one_way"
     end
 
     if input == "toggle" then
-        local new_behaviour_type = behaviour_type and next(constants.behaviour, behaviour_type)
-        if not new_behaviour_type then
-            new_behaviour_type = next(constants.behaviour)
+        local new_valve_type = valve_type and next(constants.valve_types, valve_type)
+        if not new_valve_type then
+            new_valve_type = next(constants.valve_types)
         end
-        behaviour_type = new_behaviour_type
-        control_behaviour.circuit_condition = constants.behaviour[behaviour_type]
+        valve_type = new_valve_type
+        control_behaviour.circuit_condition = constants.valve_types[valve_type]
         constant = control_behaviour.circuit_condition.constant
     else
-        if not behaviour_type or behaviour_type == "one_way" then
-            player.create_local_flying_text{text = {"configurable-valves.config-not-supported"}, create_at_cursor=true}
+        if not valve_type then
+            player.create_local_flying_text{text = {"configurable-valves.unknown-configuration"}, create_at_cursor=true}
+            return
+        elseif valve_type == "one_way" then
+            player.create_local_flying_text{text = {"configurable-valves.configuration-doesnt-support-thresholds"}, create_at_cursor=true}
             return
         end
+
         constant = (math.floor(constant/10)*10) + (10 * (input == "plus" and 1 or -1 ))
         constant = math.min(100, math.max(0, constant))
         circuit_condition.constant = constant
@@ -66,7 +70,7 @@ local function quick_toggle(input, event)
     end
 
     valve.create_build_effect_smoke()
-    local msg = {"", {"configurable-valves."..behaviour_type}}
+    local msg = {"", {"configurable-valves."..valve_type}}
     if constant then table.insert(msg, ": "..tostring(constant).."%") end
     player.create_local_flying_text{text = msg, position = valve.position, speed = 30}
 end
@@ -160,7 +164,7 @@ local function handle_valve_creation(valve)
     create_hidden_combinator(valve, input_guage, true)
     create_hidden_combinator(valve, output_guage, false)
 
-    set_defualt_behaviour(valve)
+    set_default_valve_type(valve)
 end
 
 ---@param valve LuaEntity
@@ -200,7 +204,7 @@ local function on_entity_created(event)
     if entity.name == "configurable-valve" then
         handle_valve_creation(entity)
     elseif entity.name == "entity-ghost" and entity.ghost_name == "configurable-valve" then
-        set_defualt_behaviour(entity)
+        set_default_valve_type(entity)
     end
 end
 

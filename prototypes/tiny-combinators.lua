@@ -20,6 +20,7 @@ local function tiny_combinator(name)
         hidden = true,
         minable = {mining_time = 0.1, result = "arithmetic-combinator"},
         max_health = 150,
+        collision_mask = { layers = { } },
         icon_draw_specification = { scale = 0 },
         energy_source = { type = "void", },
         active_energy_usage = "1kW",

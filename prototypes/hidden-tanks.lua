@@ -17,6 +17,7 @@ local function create_hidden_tank(name, is_input)
         {
             type = "storage-tank",
             name = name,
+            localised_name = {"", {"entity-name.configurable-valve"}, (is_input and " input guage" or " output guage")},
             icon = "__base__/graphics/icons/storage-tank.png",
             flags = {
                 "not-repairable",
