@@ -63,7 +63,7 @@ data:extend{
         type = "pump",
         name = "configurable-valve",
         icon = "__configurable-valves__/graphics/configurable-valve/icon.png",
-        flags = {"placeable-neutral", "player-creation"},
+        flags = {"placeable-neutral", "player-creation", "hide-alt-info"},
         factoriopedia_description = {"", {"entity-description.configurable-valve"}, {"configurable-valves.extended-description"}},
         minable = {mining_time = 0.2, result = "configurable-valve"},
         max_health = 180,
@@ -99,7 +99,8 @@ data:extend{
           {
             {connection_type = "linked", flow_direction = "output", linked_connection_id=31113 + 1 },
             {connection_type = "linked", flow_direction = "input", linked_connection_id=31113 - 1 }
-          }
+          },
+          hide_connection_info = true,
         },
         energy_source = { type = "void" },
         energy_usage = "29kW",

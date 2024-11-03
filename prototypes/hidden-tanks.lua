@@ -26,7 +26,8 @@ local function create_hidden_tank(name, is_input)
                 "not-flammable",
                 "not-upgradable",
                 "not-in-kill-statistics",
-                "placeable-off-grid" -- To be directly above pump position
+                "placeable-off-grid", -- To be directly above pump position
+                "hide-alt-info",
             },
             selectable_in_game = false,
             hidden = true,
@@ -38,7 +39,7 @@ local function create_hidden_tank(name, is_input)
                 volume = 100,
                 pipe_covers = pipecoverspictures(),
                 pipe_connections = get_pipe_connections(is_input),
-                hide_connection_info = is_input == true,
+                hide_connection_info = true,
                 max_pipeline_extent = 1000000, -- Big number, nobody would build this big right?
             },
             show_fluid_icon = false,

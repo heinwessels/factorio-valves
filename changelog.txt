@@ -5,6 +5,8 @@ Date: ??.11.2024
     - Added easy configuring of valves using keyboard shortcuts. Keys are configurable.
       - Ctrl+R switches between overflow, top-up and no-return.
       - Numpad +/- changes the threshold in 10% increments.
+  Changes:
+    - Removed most incorrect fluidbox arrows. Waiting on API changes.
 ---------------------------------------------------------------------------------------------------
 Version: 0.1.1
 Date: 02.11.2024
