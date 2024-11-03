@@ -9,7 +9,7 @@ local constants = require("__configurable-valves__.constants")
 local replace_behaviour = {
     ["py-overflow-valve"]   = { behaviour = constants.behaviour.overflow },
     ["py-underflow-valve"]  = { behaviour = constants.behaviour.top_up,     invert_direction = true },
-    ["py-check-valve"]      = { behaviour = constants.behaviour.no_return,  invert_direction = true },
+    ["py-check-valve"]      = { behaviour = constants.behaviour.one_way,  invert_direction = true },
 }
 
 for _, surface in pairs(game.surfaces) do

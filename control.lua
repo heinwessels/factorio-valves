@@ -30,7 +30,7 @@ local function quick_toggle(input, event)
         valve.name == "entity-ghost" and valve.ghost_name == "configurable-valve"
     ) then return end
 
-    ---@type "overflow" | "top_up" | "no_return"?
+    ---@type "overflow" | "top_up" | "one_way"?
     local behaviour_type
     local control_behaviour = valve.get_or_create_control_behavior()
     ---@cast control_behaviour LuaPumpControlBehavior
@@ -43,7 +43,7 @@ local function quick_toggle(input, event)
     elseif first == "signal-O" and not second and circuit_condition.comparator == "<" then
         behaviour_type = "top_up"
     elseif first == "signal-I" and second == "signal-O" and circuit_condition.comparator == ">" then
-        behaviour_type = "no_return"
+        behaviour_type = "one_way"
     end
 
     if input == "toggle" then
@@ -55,7 +55,7 @@ local function quick_toggle(input, event)
         control_behaviour.circuit_condition = constants.behaviour[behaviour_type]
         constant = control_behaviour.circuit_condition.constant
     else
-        if not behaviour_type or behaviour_type == "no_return" then
+        if not behaviour_type or behaviour_type == "one_way" then
             player.create_local_flying_text{text = {"configurable-valves.config-not-supported"}, create_at_cursor=true}
             return
         end
