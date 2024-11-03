@@ -1,6 +1,6 @@
 ---------------------------------------------------------------------------------------------------
 Version: 0.1.2
-Date: ??.11.2024
+Date: 03.11.2024
   Features:
     - Added easy configuring of valves using keyboard shortcuts. Keys are configurable.
       - Ctrl+R switches between overflow, top-up and one-way.
