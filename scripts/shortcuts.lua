@@ -29,10 +29,14 @@ local function quick_toggle(input, event)
     circuit_condition.constant = constant
     control_behaviour.circuit_condition = circuit_condition
 
+    -- Visualize it to the player
     valve.create_build_effect_smoke()
-    local msg = {"", {"valves."..valve_type}}
-    if constant then table.insert(msg, ": "..tostring(constant).."%") end
-    player.create_local_flying_text{text = msg, position = valve.position, speed = 30}
+    storage.players = storage.players or {}
+    local player_data = storage.players[event.player_index]
+    if not player_data then return end
+    if player_data.render_threshold then
+        player_data.render_threshold.text = tostring(constant)
+    end
 end
 
 shortcuts.events = { }
