@@ -4,7 +4,7 @@
 
 Overflow, top-up and one-way(check) valves, just like Flow Control and Advanced Fluid Handling. The thresholds can be configured using shortcuts.
 
-This is based on the techniques used in [Configurable Valves](https://mods.factorio.com/mod/configurable-valves).
+This is a fully standalone mod, even though it's uses the techniques used in [Configurable Valves](https://mods.factorio.com/mod/configurable-valves). The difference is now you cannot set thresholds in the circuit conditions directly, but rather interact through the shortcuts mentioned below.
 
 # Shortcuts (configurable)
 - **Numpad +**: Increase threshold for overflow or top-up valves.
