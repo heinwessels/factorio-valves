@@ -111,7 +111,7 @@ local function on_entity_created(event)
     elseif entity.name == "entity-ghost" and constants.valve_names[entity.ghost_name] then
         local control_behaviour = entity.get_or_create_control_behavior()
         ---@cast control_behaviour LuaPumpControlBehavior
-        configuration.initialize(constants.valve_names[entity.name], control_behaviour, player)
+        configuration.initialize(constants.valve_names[entity.ghost_name], control_behaviour, player)
         if not debug then entity.operable = false end
     end
 end
