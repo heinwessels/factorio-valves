@@ -4,12 +4,11 @@
 if not script.active_mods["pyindustry"] then return end
 
 local util = require("util")
-local constants = require("__configurable-valves__.constants")
 
 local replace_behaviour = {
-    ["py-overflow-valve"]   = { behaviour = constants.valve_types.overflow },
-    ["py-underflow-valve"]  = { behaviour = constants.valve_types.top_up,     invert_direction = true },
-    ["py-check-valve"]      = { behaviour = constants.valve_types.one_way,  invert_direction = true },
+    ["py-overflow-valve"]   = { name = "valves-overflow" },
+    ["py-underflow-valve"]  = { name = "valves-top_up",     invert_direction = true },
+    ["py-check-valve"]      = { name = "valves-one_way",    invert_direction = true },
 }
 
 for _, surface in pairs(game.surfaces) do
@@ -25,19 +24,12 @@ for _, surface in pairs(game.surfaces) do
             end
 
             local valve = surface.create_entity{
-                name = "configurable-valve",
+                name = config.name,
                 position = position,
                 force = force,
                 direction = direction,
                 raise_built = true,
             }
-            if valve then
-                local control_behaviour = valve.get_or_create_control_behavior()
-                ---@cast control_behaviour LuaPumpControlBehavior
-                control_behaviour.circuit_enable_disable = true
-                assert(config.behaviour)
-                control_behaviour.circuit_condition = config.behaviour
-            end
         end
     end
 end

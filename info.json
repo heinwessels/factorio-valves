@@ -1,8 +1,8 @@
 {
-  "name": "configurable-valves",
-  "version": "0.1.2",
-  "title": "Configurable Valves",
-  "description": "Configurable valves for pipes. Allows for overflow, top-up and one-way/check valves, just like Flow Control and Advanced Fluid Handling. Fully configurable with custom levels, and connectable to the circuit network.",
+  "name": "valves",
+  "version": "1.0.0",
+  "title": "Valves",
+  "description": "Overflow, top-up and one-way(check) valves, just like Flow Control and Advanced Fluid Handling. The thresholds can be configured using shortcuts. Based on Configurable Valves' code.",
   "author": "stringweasel",
   "factorio_version": "2.0",
   "dependencies": [ 

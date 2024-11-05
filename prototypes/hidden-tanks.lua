@@ -17,7 +17,7 @@ local function create_hidden_tank(name, is_input)
         {
             type = "storage-tank",
             name = name,
-            localised_name = {"", {"entity-name.configurable-valve"}, (is_input and " input guage" or " output guage")},
+            localised_name = {"", {"valves.internal-guage"}, (is_input and " input guage" or " output guage")},
             icon = "__base__/graphics/icons/storage-tank.png",
             flags = {
                 "not-repairable",
@@ -53,5 +53,5 @@ local function create_hidden_tank(name, is_input)
 end
 
 
-create_hidden_tank("configurable-valve-guage-input", true)
-create_hidden_tank("configurable-valve-guage-output", false)
+create_hidden_tank("valves-guage-input", true)
+create_hidden_tank("valves-guage-output", false)

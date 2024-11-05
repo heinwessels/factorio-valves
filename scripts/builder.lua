@@ -1,5 +1,5 @@
-local constants = require("__configurable-valves__.constants")
-local configuration = require("__configurable-valves__.scripts.configuration")
+local constants = require("__valves__.constants")
+local configuration = require("__valves__.scripts.configuration")
 
 local builder = { }
 local debug = false
@@ -25,7 +25,7 @@ end
 ---@return LuaEntity
 local function create_hidden_guage(valve, is_input)
     local guage = valve.surface.create_entity{
-        name = "configurable-valve-guage-" .. (is_input and "input" or "output"),
+        name = "valves-guage-" .. (is_input and "input" or "output"),
         position = valve.position,
         force = valve.force,
         direction = valve.direction,
@@ -83,14 +83,17 @@ local function handle_valve_creation(valve, player)
 
     local control_behaviour = valve.get_or_create_control_behavior()
     ---@cast control_behaviour LuaPumpControlBehavior
-    configuration.initialize(control_behaviour, player)
+    configuration.initialize(constants.valve_names[valve.name], control_behaviour, player)
+
+    -- Otherwise the player could change it to anything they want by accident.
+    if not debug then valve.operable = false end
 end
 
 ---@param valve LuaEntity
 local function handle_valve_destroyed(valve)
     for _, name in pairs{
-        "configurable-valve-guage-input",
-        "configurable-valve-guage-output",
+        "valves-guage-input",
+        "valves-guage-output",
         "valves-tiny-combinator-input",
         "valves-tiny-combinator-output",
     } do
@@ -103,18 +106,19 @@ end
 local function on_entity_created(event)
     local entity = event.entity
     local player = event.player_index and game.get_player(event.player_index) or nil
-    if entity.name == "configurable-valve" then
+    if constants.valve_names[entity.name] then
         handle_valve_creation(entity, player)
-    elseif entity.name == "entity-ghost" and entity.ghost_name == "configurable-valve" then
+    elseif entity.name == "entity-ghost" and constants.valve_names[entity.ghost_name] then
         local control_behaviour = entity.get_or_create_control_behavior()
         ---@cast control_behaviour LuaPumpControlBehavior
-        configuration.initialize(control_behaviour, player)
+        configuration.initialize(constants.valve_names[entity.name], control_behaviour, player)
+        if not debug then entity.operable = false end
     end
 end
 
 local function on_entity_destroyed(event)
     local entity = event.entity
-    if entity.name == "configurable-valve" then
+    if constants.valve_names[entity.name] then
         handle_valve_destroyed(entity)
     end
 end
@@ -122,10 +126,10 @@ end
 ---@param event EventData.on_player_rotated_entity
 local function on_player_rotated_entity(event)
     local valve = event.entity
-    if valve.name ~= "configurable-valve" then return end
+    if not constants.valve_names[valve.name] then return end
     for _, name in pairs{
-        "configurable-valve-guage-input",
-        "configurable-valve-guage-output",
+        "valves-guage-input",
+        "valves-guage-output",
     } do
         local entity = valve.surface.find_entity(name, valve.position)
         if entity then entity.direction = valve.direction end

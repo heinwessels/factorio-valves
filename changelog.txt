@@ -1,22 +1,7 @@
 ---------------------------------------------------------------------------------------------------
-Version: 0.1.2
-Date: 03.11.2024
+Version: 1.0.0
+Date: 05.11.2024
   Features:
-    - Added easy configuring of valves using keyboard shortcuts. Keys are configurable.
-      - Ctrl+R switches between overflow, top-up and one-way.
-      - Numpad +/- changes the threshold in 10% increments.
-  Changes:
-    - Removed most incorrect fluidbox arrows. Waiting on API changes.
----------------------------------------------------------------------------------------------------
-Version: 0.1.1
-Date: 02.11.2024
-  Compatibility:
-    - Add migration for Pyanodon's valves from Factorio 1.1.
-  Bugfixes:
-    - Fixed valve forcing the max pipeline extent to the default 320.
-    - Fixed blueprinted valves always defaulting back to overflow valve.
----------------------------------------------------------------------------------------------------
-Version: 0.1.0
-Date: 01.11.2024
-  Features:
-    - Added Configurable valve.
+    - Added Overflow valve.
+    - Added Top Up valve.
+    - Added One Way valve.
