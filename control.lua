@@ -4,4 +4,5 @@ handler.add_libraries({
     require("__valves__.scripts.builder"),
     require("__valves__.scripts.shortcuts"),
     require("__valves__.scripts.cursor"),
+    require("__valves__.scripts.rebuilder"),
 })

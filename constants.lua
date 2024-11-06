@@ -20,4 +20,10 @@ for valve_type in pairs(constants.valve_types) do
     constants.valve_names["valves-"..valve_type] = valve_type
 end
 
+---@type table<"input"|"output", table<ValveType, boolean>>
+constants.need = {
+    input   = { overflow = true,    one_way = true },
+    output  = { top_up = true,      one_way = true },
+}
+
 return constants

@@ -74,12 +74,17 @@ end
 
 ---@param valve LuaEntity
 ---@param player LuaPlayer?
-local function handle_valve_creation(valve, player)
+function builder.build(valve, player)
     local input_guage = create_hidden_guage(valve, true)
     local output_guage = create_hidden_guage(valve, false)
 
-    create_hidden_combinator(valve, input_guage, true)
-    create_hidden_combinator(valve, output_guage, false)
+    local valve_type = constants.valve_names[valve.name]
+    if constants.need.input[valve_type] then
+        create_hidden_combinator(valve, input_guage, true)
+    end
+    if constants.need.output[valve_type] then
+        create_hidden_combinator(valve, output_guage, false)
+    end
 
     local control_behaviour = valve.get_or_create_control_behavior()
     ---@cast control_behaviour LuaPumpControlBehavior
@@ -90,7 +95,7 @@ local function handle_valve_creation(valve, player)
 end
 
 ---@param valve LuaEntity
-local function handle_valve_destroyed(valve)
+function builder.destroy(valve)
     for _, name in pairs{
         "valves-guage-input",
         "valves-guage-output",
@@ -107,7 +112,7 @@ local function on_entity_created(event)
     local entity = event.entity
     local player = event.player_index and game.get_player(event.player_index) or nil
     if constants.valve_names[entity.name] then
-        handle_valve_creation(entity, player)
+        builder.build(entity, player)
     elseif entity.name == "entity-ghost" and constants.valve_names[entity.ghost_name] then
         local control_behaviour = entity.get_or_create_control_behavior()
         ---@cast control_behaviour LuaPumpControlBehavior
@@ -119,7 +124,7 @@ end
 local function on_entity_destroyed(event)
     local entity = event.entity
     if constants.valve_names[entity.name] then
-        handle_valve_destroyed(entity)
+        builder.destroy(entity)
     end
 end
 
