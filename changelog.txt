@@ -3,6 +3,7 @@ Version: 1.0.1
 Date: ??.11.2024
   Locale:
     - Simplified Chinese translation by Houraiji_Kyuusyou.
+    - Russian translation by eugenikus8.
 ---------------------------------------------------------------------------------------------------
 Version: 1.0.0
 Date: 05.11.2024
