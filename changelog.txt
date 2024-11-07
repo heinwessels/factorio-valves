@@ -1,6 +1,6 @@
 ---------------------------------------------------------------------------------------------------
-Version: 1.0.1
-Date: ??.11.2024
+Version: 1.1.0
+Date: 07.11.2024
   Features:
     - Default valve thresholds can be changed in map settings.
   Optimizations:

@@ -1,6 +1,6 @@
 {
   "name": "valves",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "title": "Valves",
   "description": "Overflow, top-up and one-way(check) valves, just like Flow Control and Advanced Fluid Handling. The thresholds can be configured using shortcuts. Based on Configurable Valves' code.",
   "author": "stringweasel",

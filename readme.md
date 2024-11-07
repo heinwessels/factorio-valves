@@ -4,21 +4,22 @@
 
 Overflow, top-up and one-way(check) valves, just like Flow Control and Advanced Fluid Handling. The thresholds can be configured using shortcuts.
 
-This is a fully standalone mod, even though it's uses the techniques used in [Configurable Valves](https://mods.factorio.com/mod/configurable-valves). The difference is now you cannot set thresholds in the circuit conditions directly, but rather interact through the shortcuts mentioned below.
+This is a fully standalone mod, even though it's uses the techniques used in [Configurable Valves](https://mods.factorio.com/mod/configurable-valves). The difference is you can only set the thresholds using shortcuts, whereas with Configurable Valves you can set the conditions directly.
 
-# Shortcuts (configurable)
+## Shortcuts (configurable)
 - **Numpad +**: Increase threshold for overflow or top-up valves.
 - **Numpad -**: Increase threshold for overflow or top-up valves.
 
-# Compatibility
+**Note:** The default threshold when placed can be changed in settings.
 
+## Compatibility
 Should be comptatibile with most mods. If it's not compatible, please let me know.
     - **Pyanodons**: Will automatically migrate old Factorio 1.1 valves to their 2.0 counter part.
 
-# Known bugs
+## Known bugs
 - There is some weird fluidbox arrows being drawn at the moment. This is awaiting API changes to fix.
 
-# Credits
+## Credits
 - _Boskid_ for adding the ability to link pipes to the Factorio engine.
 - [GotLag and Snouz](https://mods.factorio.com/mod/Flow%20Control) for the high quality graphics of the old pump sprite. 
 - _justarandomgeek_ for the [Factorio Modding Toolkit](https://marketplace.visualstudio.com/items?itemName=justarandomgeek.factoriomod-debug), without which this mod would not have been possible.
