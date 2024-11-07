@@ -1,4 +1,5 @@
 local constants = require("__valves__.constants")
+local util = require("util")
 
 local configuration = { }
 
@@ -8,8 +9,15 @@ local configuration = { }
 ---@param valve_type ValveType
 ---@param player LuaPlayer?
 function configuration.set_type(behaviour, valve_type, player)
-    behaviour.circuit_condition = constants.valve_types[valve_type]
-    ---@TODO Set custom threshold set per player setting
+    local new_circuit_condition = util.table.deepcopy(constants.valve_types[valve_type])
+
+    if player and (valve_type == "overflow" or valve_type == "top_up") then
+        -- TODO This is probably slow. Cache it
+        local new_threshold = settings.get_player_settings(player)["valves-default-threshold-"..valve_type].value
+        new_circuit_condition.constant = new_threshold
+    end
+
+    behaviour.circuit_condition = new_circuit_condition
 end
 
 ---@param valve_type ValveType

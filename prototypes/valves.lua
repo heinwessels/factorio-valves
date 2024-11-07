@@ -78,7 +78,8 @@ local function create_valve(valve_type)
           },
           factoriopedia_description = {"",
             {"entity-description."..name},
-            {"valves.valve-shortcuts"},
+            valve_type ~= "one_way" and {"valves.valve-shortcuts"} or nil,
+            valve_type ~= "one_way" and {"valves.threshold-settings"} or nil,
           },
           minable = {mining_time = 0.2, result = name},
           allow_copy_paste = false, -- Because we can't detect pasting blueprint over existing entity.
