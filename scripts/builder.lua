@@ -88,7 +88,7 @@ function builder.build(valve, player)
 
     local control_behaviour = valve.get_or_create_control_behavior()
     ---@cast control_behaviour LuaPumpControlBehavior
-    configuration.initialize(constants.valve_names[valve.name], control_behaviour, player)
+    configuration.initialize(constants.valve_names[valve.name], control_behaviour)
 
     -- Otherwise the player could change it to anything they want by accident.
     if not debug then valve.operable = false end
@@ -116,7 +116,7 @@ local function on_entity_created(event)
     elseif entity.name == "entity-ghost" and constants.valve_names[entity.ghost_name] then
         local control_behaviour = entity.get_or_create_control_behavior()
         ---@cast control_behaviour LuaPumpControlBehavior
-        configuration.initialize(constants.valve_names[entity.ghost_name], control_behaviour, player)
+        configuration.initialize(constants.valve_names[entity.ghost_name], control_behaviour)
         if not debug then entity.operable = false end
     end
 end

@@ -1,6 +1,8 @@
 ---------------------------------------------------------------------------------------------------
 Version: 1.0.1
 Date: ??.11.2024
+  Features:
+    - Default valve thresholds can be changed in map settings.
   Optimizations:
     - Reduced number of hidden combinators.
   Locale:

@@ -26,4 +26,12 @@ constants.need = {
     output  = { top_up = true,      one_way = true },
 }
 
+---@type table<string, ValveType>
+constants.setting_to_valve_type = { }
+for valve_type in pairs(constants.valve_types) do
+    if valve_type ~= "one_way" then
+        constants.setting_to_valve_type["valves-default-threshold-"..valve_type] = valve_type
+    end
+end
+
 return constants

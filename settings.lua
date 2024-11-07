@@ -1,18 +1,16 @@
-data:extend({
-    {
-        type = "int-setting",
-        name = "valves-default-threshold-top_up",
-        setting_type = "runtime-per-user",
-        minimum_value = 0,
-        maximum_value = 100,
-        default_value = 50,
-    },
-    {
-        type = "int-setting",
-        name = "valves-default-threshold-overflow",
-        setting_type = "runtime-per-user",
-        minimum_value = 0,
-        maximum_value = 100,
-        default_value = 80,
-    },
-})
+local constants = require("__valves__.constants")
+
+for setting, valve_type in pairs(constants.setting_to_valve_type) do
+    local default_value = constants.valve_types[valve_type].constant
+    assert(default_value, "unexpected condition for valve type "..valve_type)
+    data:extend({
+        {
+            type = "int-setting",
+            name = setting,
+            setting_type = "runtime-global",
+            minimum_value = 0,
+            maximum_value = 100,
+            default_value = default_value,
+        },
+    })
+end
