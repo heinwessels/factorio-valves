@@ -2,7 +2,7 @@
   "name": "valves",
   "version": "1.1.0",
   "title": "Valves",
-  "description": "Overflow, top-up and one-way(check) valves, just like Flow Control and Advanced Fluid Handling. The thresholds can be configured using shortcuts. Based on Configurable Valves' code.",
+  "description": "Adds three seperate valves for pipes: overflow, top-up and one-way/check valves. Inspired by Flow Control and Advanced Fluid Handling. The thresholds can be configured using shortcuts. Based on Configurable Valves' code.",
   "author": "stringweasel",
   "factorio_version": "2.0",
   "dependencies": [ 
