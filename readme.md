@@ -16,8 +16,8 @@ This is a fully standalone mod, even though it's uses the techniques used in [Co
 Should be comptatibile with most mods. If it's not compatible, please let me know.
     - **Pyanodons**: Will automatically migrate old Factorio 1.1 valves to their 2.0 counter part.
 
-## Known bugs
-- There is some weird fluidbox arrows being drawn at the moment. This is awaiting API changes to fix.
+# UPS Impact
+This valve has no measurable impact. It's the same UPS impact as using a pump + combinator + storage-tank to control fluid movement. There are no `on_tick` calculations.
 
 ## Credits
 - _Boskid_ for adding the ability to link pipes to the Factorio engine.
