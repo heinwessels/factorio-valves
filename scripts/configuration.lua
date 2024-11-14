@@ -6,6 +6,24 @@ local configuration = { }
 ---@alias ValveType "overflow" | "top_up" | "one_way"
 
 ---@param behaviour LuaPumpControlBehavior
+---@return ValveType?
+function configuration.deduce_type(behaviour)
+    local condition = behaviour.circuit_condition
+    local first = condition.first_signal and condition.first_signal.name
+    if not first then return end
+
+    if first == "signal-anything" then
+        if condition.comparator == ">" then
+            return "overflow"
+        else
+            return "top_up"
+        end
+    elseif first == "signal-check" and condition.comparator == ">" then
+        return "one_way"
+    end
+end
+
+---@param behaviour LuaPumpControlBehavior
 ---@param valve_type ValveType
 function configuration.set_type(behaviour, valve_type)
     local new_circuit_condition = util.table.deepcopy(constants.valve_types[valve_type])
@@ -20,9 +38,11 @@ end
 ---@param valve_type ValveType
 ---@param behaviour LuaPumpControlBehavior
 function configuration.initialize(valve_type, behaviour)
-    if behaviour.circuit_enable_disable then
+    if behaviour.circuit_enable_disable and valve_type == configuration.deduce_type(behaviour) then
         -- This valve's condition has already been set. Don't overwrite it.
         -- Probably cause this is a ghost of a dead valve, or from a blueprint.
+        -- IMPORTANT: We only do this is the behaviour matches this valve type as well,
+        -- otherwise quick-replaced valves won't update their circuit conditions.
         return
     end
 
