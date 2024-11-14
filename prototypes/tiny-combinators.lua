@@ -2,7 +2,7 @@ local base = data.raw["arithmetic-combinator"]["arithmetic-combinator"]
 
 local function tiny_combinator(name)
     return {
-        type = "arithmetic-combinator",
+        type = "decider-combinator",
         name = name,
         icon = "__base__/graphics/icons/arithmetic-combinator.png",
         flags = {
@@ -39,6 +39,5 @@ end
 
 -- We create separate versions to easily find the one we want in control
 data:extend{
-    tiny_combinator("valves-tiny-combinator-input"),
-    tiny_combinator("valves-tiny-combinator-output"),
+    tiny_combinator("valves-tiny-combinator"),
 }

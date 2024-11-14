@@ -28,16 +28,32 @@ for _, technology in pairs(data.raw.technology) do
     end
 end
 
+---@type table<ValveType, data.PipeConnectionDefinition[]>
+local valve_pipe_connections = {
+  ["overflow"] = {
+    { direction = defines.direction.south, position = {0, 0}, flow_direction = "output" },
+    { connection_type = "linked", flow_direction = "input", linked_connection_id=31113 - 1 }
+  },
+  ["top_up"] = {
+    { connection_type = "linked", flow_direction = "output", linked_connection_id=31113 + 1 },
+    { direction = defines.direction.north, position = {0, 0}, flow_direction = "input" }
+  },
+  ["one_way"] = {
+    {connection_type = "linked", flow_direction = "output", linked_connection_id=31113 + 1 },
+    {connection_type = "linked", flow_direction = "input", linked_connection_id=31113 - 1 }
+  }
+}
+
 ---@type data.IngredientPrototype?
 local ingredients
 for _, recipe in pairs(data.raw.recipe) do
   for _, result in pairs(recipe.results or { }) do
-      if result.type == "item" then
-          if result.name == "pump" then
-            ingredients = recipe.ingredients
-            break
-          end
-      end
+    if result.type == "item" then
+        if result.name == "pump" then
+          ingredients = recipe.ingredients
+          break
+        end
+    end
   end
   if ingredients then break end
 end
@@ -112,11 +128,7 @@ local function create_valve(valve_type)
           {
             volume = 400,
             pipe_covers = pipecoverspictures(),
-            pipe_connections =
-            {
-              {connection_type = "linked", flow_direction = "output", linked_connection_id=31113 + 1 },
-              {connection_type = "linked", flow_direction = "input", linked_connection_id=31113 - 1 }
-            },
+            pipe_connections = valve_pipe_connections[valve_type],
             hide_connection_info = true,
           },
           energy_source = { type = "void" },

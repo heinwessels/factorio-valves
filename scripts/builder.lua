@@ -37,58 +37,78 @@ local function create_hidden_guage(valve, is_input)
     return guage
 end
 
----@param valve LuaEntity
----@param guage LuaEntity?
----@param is_input boolean else it's an output
----@return LuaWireConnector
-local function create_hidden_combinator(valve, guage, is_input)
-    local combinator = valve.surface.create_entity{
-        name = "valves-tiny-combinator-" .. (is_input and "input" or "output"),
-        position = valve.position,
-        force = valve.force,
-        create_build_effect_smoke = false
-    }
-    assert(combinator)
-    combinator.destructible = false
-
-    local behaviour = combinator.get_or_create_control_behavior() --[[@as LuaArithmeticCombinatorControlBehavior ]]
-    behaviour.parameters = {
-        first_signal = constants.signal.each,
-        operation = '+',
-        second_constant = 0,
-        output_signal = is_input and constants.signal.input or constants.signal.output,
-    }
-
-    local combinator_output_connector = combinator.get_wire_connector(defines.wire_connector_id.combinator_output_green, true)
-    local valve_connector = valve.get_wire_connector(defines.wire_connector_id.circuit_green, true)
-    valve_connector.connect_to(combinator_output_connector, false, defines.wire_origin.script)
-
-    if guage then
-        local combinator_input_connector = combinator.get_wire_connector(defines.wire_connector_id.combinator_input_green, true)
+---@type table<ValveType, fun(valve:LuaEntity)>
+local build_valve_type = {
+    ["overflow"] = function(valve)
+        local guage = create_hidden_guage(valve, true)
+        local valve_connector = valve.get_wire_connector(defines.wire_connector_id.circuit_green, true)
         local guage_connector = guage.get_wire_connector(defines.wire_connector_id.circuit_green, true)
-        guage_connector.connect_to(combinator_input_connector, false, defines.wire_origin.script)
-    end
+        valve_connector.connect_to(guage_connector, false, defines.wire_origin.script)
+    end,
+    ["top_up"] = function(valve)
+        local guage = create_hidden_guage(valve, false)
+        local valve_connector = valve.get_wire_connector(defines.wire_connector_id.circuit_green, true)
+        local guage_connector = guage.get_wire_connector(defines.wire_connector_id.circuit_green, true)
+        valve_connector.connect_to(guage_connector, false, defines.wire_origin.script)
+    end,
+    ["one_way"] = function(valve)
+        local combinator = valve.surface.create_entity{
+            name = "valves-tiny-combinator",
+            position = valve.position,
+            force = valve.force,
+            create_build_effect_smoke = false
+        }
+        assert(combinator)
+        combinator.destructible = false
+        local behaviour = combinator.get_or_create_control_behavior() --[[@as LuaDeciderCombinatorControlBehavior ]]
 
-    return combinator_output_connector
-end
+        behaviour.set_condition(1, {
+            comparator = ">",
+            compare_type = "or",
+            first_signal = constants.signal.each,
+            first_signal_networks = { green = true, red = false },
+            second_signal = constants.signal.each,
+            second_signal_networks = { green = false, red = true },
+        })
+
+        behaviour.set_output(1, {
+            copy_count_from_input = false,
+            networks = { green = true, red = false },
+            signal = constants.signal.check,
+        })
+
+        do
+            local input_guage = create_hidden_guage(valve, true)
+            local input_guage_connector = input_guage.get_wire_connector(defines.wire_connector_id.circuit_green, true)
+            local combinator_input_green = combinator.get_wire_connector(defines.wire_connector_id.combinator_input_green, true)
+            input_guage_connector.connect_to(combinator_input_green, false, defines.wire_origin.script)
+        end
+
+        do
+            local output_guage = create_hidden_guage(valve, false)
+            local output_guage_connector = output_guage.get_wire_connector(defines.wire_connector_id.circuit_red, true)
+            local combinator_input_red = combinator.get_wire_connector(defines.wire_connector_id.combinator_input_red, true)
+            output_guage_connector.connect_to(combinator_input_red, false, defines.wire_origin.script)
+        end
+
+        do
+            local valve_connector = valve.get_wire_connector(defines.wire_connector_id.circuit_green, true)
+            local combinator_output_connector = combinator.get_wire_connector(defines.wire_connector_id.combinator_output_green, true)
+            valve_connector.connect_to(combinator_output_connector, false, defines.wire_origin.script)
+        end
+    end,
+}
 
 ---@param valve LuaEntity
----@param player LuaPlayer?
-function builder.build(valve, player)
-    local input_guage = create_hidden_guage(valve, true)
-    local output_guage = create_hidden_guage(valve, false)
-
+function builder.build(valve)
+    ---@type ValveType
     local valve_type = constants.valve_names[valve.name]
-    if constants.need.input[valve_type] then
-        create_hidden_combinator(valve, input_guage, true)
-    end
-    if constants.need.output[valve_type] then
-        create_hidden_combinator(valve, output_guage, false)
-    end
+
+    build_valve_type[valve_type](valve)
 
     local control_behaviour = valve.get_or_create_control_behavior()
     ---@cast control_behaviour LuaPumpControlBehavior
-    configuration.initialize(constants.valve_names[valve.name], control_behaviour)
+    configuration.initialize(valve_type, control_behaviour)
 
     -- Otherwise the player could change it to anything they want by accident.
     if not debug then valve.operable = false end
@@ -99,8 +119,7 @@ function builder.destroy(valve)
     for _, name in pairs{
         "valves-guage-input",
         "valves-guage-output",
-        "valves-tiny-combinator-input",
-        "valves-tiny-combinator-output",
+        "valves-tiny-combinator",
     } do
         local entity = valve.surface.find_entity(name, valve.position)
         if entity then entity.destroy() end
@@ -112,7 +131,7 @@ local function on_entity_created(event)
     local entity = event.entity
     local player = event.player_index and game.get_player(event.player_index) or nil
     if constants.valve_names[entity.name] then
-        builder.build(entity, player)
+        builder.build(entity)
     elseif entity.name == "entity-ghost" and constants.valve_names[entity.ghost_name] then
         local control_behaviour = entity.get_or_create_control_behavior()
         ---@cast control_behaviour LuaPumpControlBehavior

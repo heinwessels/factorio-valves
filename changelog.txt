@@ -1,6 +1,8 @@
 ---------------------------------------------------------------------------------------------------
 Version: 1.1.1
 Date: ??.11.2024
+  Optimizations:
+    - Reduced number of hidden combinators and tanks even more to the absolute minimum.
   Locale:
     - Updated Russian translation by eugenikus8.
 ---------------------------------------------------------------------------------------------------
