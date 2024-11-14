@@ -8,7 +8,7 @@ This is a fully standalone mod, even though it's uses the techniques used in [Co
 
 ## Shortcuts (configurable)
 - **Numpad +**: Increase threshold for overflow or top-up valves.
-- **Numpad -**: Increase threshold for overflow or top-up valves.
+- **Numpad -**: Decrease threshold for overflow or top-up valves.
 
 **Note:** The default threshold when placed can be changed in settings.
 
