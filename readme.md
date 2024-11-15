@@ -17,7 +17,7 @@ Should be comptatibile with most mods. If it's not compatible, please let me kno
     - **Pyanodons**: Will automatically migrate old Factorio 1.1 valves to their 2.0 counter part.
 
 # UPS Impact
-This valve has no measurable impact. It's the same UPS impact as using a pump + combinator + storage-tank to control fluid movement. There are no `on_tick` calculations.
+This valve has no measurable performance impact. The worst case is a using a pump + combinator + storage-tank to control fluid movement, while the overflow and top-up valve only has a storage-tank + pump. There are no `on_tick` calculations.
 
 ## Credits
 - _Boskid_ for adding the ability to link pipes to the Factorio engine.
