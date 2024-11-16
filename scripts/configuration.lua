@@ -6,30 +6,13 @@ local configuration = { }
 ---@alias ValveType "overflow" | "top_up" | "one_way"
 
 ---@param behaviour LuaPumpControlBehavior
----@return ValveType?
-function configuration.deduce_type(behaviour)
-    local condition = behaviour.circuit_condition
-    local first = condition.first_signal and condition.first_signal.name
-    if not first then return end
-
-    if first == "signal-anything" then
-        if condition.comparator == ">" then
-            return "overflow"
-        else
-            return "top_up"
-        end
-    elseif first == "signal-check" and condition.comparator == ">" then
-        return "one_way"
-    end
-end
-
----@param behaviour LuaPumpControlBehavior
 ---@param valve_type ValveType
-function configuration.set_type(behaviour, valve_type)
+---@param overwrite_threshold integer?
+function configuration.set_type(behaviour, valve_type, overwrite_threshold)
     local new_circuit_condition = util.table.deepcopy(constants.valve_types[valve_type])
 
     if valve_type == "overflow" or valve_type == "top_up" then
-        new_circuit_condition.constant = storage.default_thresholds[valve_type]
+        new_circuit_condition.constant = overwrite_threshold or storage.default_thresholds[valve_type]
     end
 
     behaviour.circuit_condition = new_circuit_condition
@@ -38,16 +21,22 @@ end
 ---@param valve_type ValveType
 ---@param behaviour LuaPumpControlBehavior
 function configuration.initialize(valve_type, behaviour)
-    if behaviour.circuit_enable_disable and valve_type == configuration.deduce_type(behaviour) then
-        -- This valve's condition has already been set. Don't overwrite it.
-        -- Probably cause this is a ghost of a dead valve, or from a blueprint.
-        -- IMPORTANT: We only do this is the behaviour matches this valve type as well,
-        -- otherwise quick-replaced valves won't update their circuit conditions.
-        return
+    -- This needs to account for:
+    --  - Blueprints/died-ghosts being built with existing thresholds
+    --  - New ghosts being placed with default thresholds.
+    --  - Outdated blueprints being placed with outdated conditions.
+    --  - The rebuilder rebuilding all valves
+    -- Therefore we will always overwrite the main circuit conditions, and if
+    -- it had a threshold before, then we will apply that again.
+
+    ---@type integer?
+    local old_threshold
+    if (valve_type == "overflow" or valve_type == "top_up") and behaviour.circuit_enable_disable then
+        old_threshold = behaviour.circuit_condition.constant
     end
 
     behaviour.circuit_enable_disable = true
-    configuration.set_type(behaviour, valve_type)
+    configuration.set_type(behaviour, valve_type, old_threshold)
 end
 
 ---@param event EventData.on_runtime_mod_setting_changed

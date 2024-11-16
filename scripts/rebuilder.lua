@@ -13,7 +13,7 @@ function rebuilder.rebuild()
     for _, surface in pairs(game.surfaces) do
         for _, valve in pairs(surface.find_entities_filtered{name=valve_names}) do
             builder.destroy(valve)
-            builder.build(valve)
+            builder.build(valve) -- Will also ensure correct circuit condition
         end
     end
 end
