@@ -3,7 +3,8 @@ local constants = { }
 ---@type table<string, SignalID>
 constants.signal = {
     each =      { type = 'virtual', name = "signal-each" },
-    any =      { type = 'virtual', name = "signal-anything" },
+    any =       { type = 'virtual', name = "signal-anything" },
+    everything ={ type = 'virtual', name = "signal-everything" },
     input =     { type = "virtual", name = "signal-I" },
     output =    { type = "virtual", name = "signal-O" },
     check =     { type = "virtual", name = "signal-check" },
@@ -11,9 +12,9 @@ constants.signal = {
 
 ---@type table<ValveType, CircuitCondition>
 constants.valve_types = {
-    overflow    = { comparator = '>', first_signal = constants.signal.any,  constant = 80, },
-    top_up      = { comparator = '<', first_signal = constants.signal.any,  constant = 50, },
-    one_way     = { comparator = '>', first_signal = constants.signal.check,  constant = 0, },
+    overflow    = { comparator = '>', first_signal = constants.signal.any,          constant = 80, },
+    top_up      = { comparator = '<', first_signal = constants.signal.everything,   constant = 50, },
+    one_way     = { comparator = '>', first_signal = constants.signal.check,        constant = 0, },
 }
 
 ---@type table<string, ValveType>
