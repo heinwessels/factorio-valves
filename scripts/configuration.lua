@@ -6,6 +6,24 @@ local configuration = { }
 ---@alias ValveType "overflow" | "top_up" | "one_way"
 
 ---@param behaviour LuaPumpControlBehavior
+---@return ValveType?
+function configuration.deduce_type(behaviour)
+    local condition = behaviour.circuit_condition
+    local first = condition.first_signal and condition.first_signal.name
+    if not first then return end
+
+    if first == "signal-anything" then
+        if condition.comparator == ">" then
+            return "overflow"
+        else
+            return "top_up"
+        end
+    elseif first == "signal-check" and condition.comparator == ">" then
+        return "one_way"
+    end
+end
+
+---@param behaviour LuaPumpControlBehavior
 ---@param valve_type ValveType
 ---@param overwrite_threshold integer?
 function configuration.set_type(behaviour, valve_type, overwrite_threshold)
@@ -26,12 +44,17 @@ function configuration.initialize(valve_type, behaviour)
     --  - New ghosts being placed with default thresholds.
     --  - Outdated blueprints being placed with outdated conditions.
     --  - The rebuilder rebuilding all valves
+    --  - Quick replacing between valves types should not retain old threshold
     -- Therefore we will always overwrite the main circuit conditions, and if
     -- it had a threshold before, then we will apply that again.
 
     ---@type integer?
     local old_threshold
-    if (valve_type == "overflow" or valve_type == "top_up") and behaviour.circuit_enable_disable then
+    if
+        (valve_type == "overflow" or valve_type == "top_up")
+        and behaviour.circuit_enable_disable
+        and valve_type == configuration.deduce_type(behaviour)
+    then
         old_threshold = behaviour.circuit_condition.constant
     end
 
