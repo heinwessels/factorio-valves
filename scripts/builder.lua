@@ -31,6 +31,7 @@ local function create_hidden_guage(valve, is_input)
         direction = valve.direction,
     }
     assert(guage)
+    guage.mirroring = valve.mirroring -- Technically not needed.
     guage.destructible = false
     guage.fluidbox.add_linked_connection(31113, valve, 31113 + (is_input and -1 or 1))
     if debug then assert(has_linked_pipe_connection(valve, guage)) end
@@ -146,8 +147,8 @@ local function on_entity_destroyed(event)
     end
 end
 
----@param event EventData.on_player_rotated_entity
-local function on_player_rotated_entity(event)
+---@param event EventData.on_player_rotated_entity|EventData.on_player_flipped_entity
+local function on_entity_changed_direction(event)
     local valve = event.entity
     if not constants.valve_names[valve.name] then return end
     for _, name in pairs{
@@ -155,7 +156,10 @@ local function on_player_rotated_entity(event)
         "valves-guage-output",
     } do
         local entity = valve.surface.find_entity(name, valve.position)
-        if entity then entity.direction = valve.direction end
+        if entity then
+            entity.direction = valve.direction
+            entity.mirroring = valve.mirroring -- Technically not required, because the valves just rotate.
+        end
     end
 end
 
@@ -173,7 +177,9 @@ builder.events = {
     [defines.events.script_raised_destroy] = on_entity_destroyed,
     [defines.events.on_space_platform_mined_entity] = on_entity_destroyed,
 
-    [defines.events.on_player_rotated_entity] = on_player_rotated_entity,
+    [defines.events.on_player_rotated_entity] = on_entity_changed_direction,
+    [defines.events.on_player_flipped_entity] = on_entity_changed_direction,
+
 }
 
 return builder
