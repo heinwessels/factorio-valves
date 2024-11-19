@@ -3,8 +3,10 @@ local builder = require("__valves__.scripts.builder")
 
 local rebuilder = { }
 
----@param args {full:boolean?}
+---@param args {full:boolean?}?
 function rebuilder.rebuild(args)
+    args = args or { }
+
     ---@type string[]
     local valve_names = { }
     for valve_name in pairs(constants.valve_names) do
@@ -47,7 +49,7 @@ rebuilder.add_remote_interface = function()
 	remote.add_interface("valves", {
 
 		rebuild_all = function(args)
-            rebuilder.rebuild(args)
+            rebuilder.rebuild(args or { })
 		end,
 
     })
