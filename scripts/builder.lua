@@ -129,8 +129,16 @@ end
 
 ---@param event EventData.on_robot_built_entity|EventData.on_built_entity|EventData.script_raised_built|EventData.script_raised_revive|EventData.on_entity_cloned
 local function on_entity_created(event)
-    local entity = event.entity
+    local entity = event.entity or event.destination
     if constants.valve_names[entity.name] then
+        if event.name == defines.events.on_entity_cloned then
+            -- If it's a clone event they destroy it and recreate it to make sure all the parts are there.
+            -- This is in case a mod calls `entity.clone(...)`. If it's an area or brush clone then all
+            -- the components will already be cloned so it won't be duplicated, cause this event is only
+            -- called _after_ all entities have been cloned.
+            builder.destroy(entity)
+        end
+
         builder.build(entity)
     elseif entity.name == "entity-ghost" and constants.valve_names[entity.ghost_name] then
         local control_behaviour = entity.get_or_create_control_behavior()
