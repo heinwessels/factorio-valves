@@ -23,9 +23,7 @@ local function on_selected_entity_changed(event)
 
     local entity = player.selected
     if not (entity and entity.valid) then return end
-    if not constants.valve_names[entity.name] and not (
-        entity.name == "entity-ghost" and constants.valve_names[entity.ghost_name]
-    ) then return end
+    if not constants.valve_names[entity.name] then return end -- Ignore ghosts
     if constants.valve_names[entity.name] == "one_way" then return end -- Doesn't have a threshold
 
     local control_behaviour = entity.get_or_create_control_behavior()
