@@ -75,7 +75,7 @@ configuration.events = {
 
 local function init()
     ---@type table<ValveType, uint>
-    storage.default_thresholds = { }
+    storage.default_thresholds = storage.default_thresholds or { }
     for setting, valve_type in pairs(constants.setting_to_valve_type) do
         storage.default_thresholds[valve_type] = settings.global[setting].value --[[@as uint]]
     end
