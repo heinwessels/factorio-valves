@@ -1,6 +1,8 @@
 ---------------------------------------------------------------------------------------------------
 Version: 1.1.7
 Date: ??.11.2024
+  Compatibility:
+    - Added compatibility with Even Pickier Dollies.
   Bugfixes:
     - Fixed that one-way valve ghosts would show a threshold.
     - Fixed that valve threshold settings are reset when mods changed.

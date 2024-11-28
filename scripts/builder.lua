@@ -171,6 +171,21 @@ local function on_entity_changed_direction(event)
     end
 end
 
+local function on_entity_changed_position(event)
+    local valve = event.moved_entity
+    if not constants.valve_names[valve.name] then return end
+    for _, name in pairs{
+        "valves-guage-input",
+        "valves-guage-output",
+        "valves-tiny-combinator",
+    } do
+        local entity = valve.surface.find_entity(name, event.start_pos)
+        if entity then
+            assert(entity.teleport(valve.position), "Failed teleporting "..name)
+        end
+    end
+end
+
 builder.events = {
     [defines.events.on_robot_built_entity] = on_entity_created,
     [defines.events.on_built_entity] = on_entity_created,
@@ -187,7 +202,16 @@ builder.events = {
 
     [defines.events.on_player_rotated_entity] = on_entity_changed_direction,
     [defines.events.on_player_flipped_entity] = on_entity_changed_direction,
-
 }
+
+local function setup_picker_dollies_compat()
+    if remote.interfaces["PickerDollies"] and remote.interfaces["PickerDollies"]["dolly_moved_entity_id"] then
+        script.on_event(remote.call("PickerDollies", "dolly_moved_entity_id"), on_entity_changed_position)
+    end
+end
+
+builder.on_init = setup_picker_dollies_compat
+builder.on_load = setup_picker_dollies_compat
+
 
 return builder
