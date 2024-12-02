@@ -7,6 +7,7 @@ Date: ??.11.2024
     - Fixed that one-way valve ghosts would show a threshold.
     - Fixed that valve threshold settings are reset when mods changed.
     - Fixed that some valves leave hidden entities behind (hopefully).
+    - Fixed missing localization for key-bind settings.
 ---------------------------------------------------------------------------------------------------
 Version: 1.1.6
 Date: 19.11.2024
