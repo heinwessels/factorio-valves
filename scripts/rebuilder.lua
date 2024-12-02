@@ -45,11 +45,27 @@ function rebuilder.rebuild(args)
     end
 end
 
+function rebuilder.remove_orphans(args)
+    local gauges = {"valves-guage-input", "valves-guage-output"}
+    local valves = {"valves-overflow", "valves-top_up", "valves-one_way"}
+    for _, surface in pairs(game.surfaces) do
+        for _, guage in pairs(surface.find_entities_filtered{name = gauges}) do
+            if 0 == surface.count_entities_filtered{position=guage.position, name=valves} then
+                guage.destroy()
+            end
+        end
+    end
+end
+
 rebuilder.add_remote_interface = function()
 	remote.add_interface("valves", {
 
 		rebuild_all = function(args)
             rebuilder.rebuild(args or { })
+		end,
+
+        remove_orphans = function(args)
+            rebuilder.remove_orphans(args or { })
 		end,
 
     })
