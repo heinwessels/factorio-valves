@@ -42,12 +42,12 @@ for _, surface in pairs(game.surfaces) do
                 direction = direction,
                 raise_built = true,
             }
-			if not entity_name ~= "check-valve" then		
-				local control_behaviour = valve.get_or_create_control_behavior()
-				local circuit_condition = control_behaviour.circuit_condition
-				circuit_condition.constant = config.constant
-				control_behaviour.circuit_condition = circuit_condition
-			end
+            if not entity_name ~= "check-valve" then
+                local control_behaviour = valve.get_or_create_control_behavior()
+                local circuit_condition = control_behaviour.circuit_condition
+                circuit_condition.constant = config.constant
+                control_behaviour.circuit_condition = circuit_condition
+            end
         end
     end
 end
