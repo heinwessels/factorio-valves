@@ -133,7 +133,7 @@ local function create_valve(valve_type)
           },
           energy_source = { type = "void" },
           energy_usage = "1W",
-          pumping_speed = 20,
+          pumping_speed = settings.startup["valves-pump-speed"].value / 60, --[[@as number value given per second, convert to per tick]]
           impact_category = "metal",
           open_sound = sounds.machine_open,
           close_sound = sounds.machine_close,

@@ -14,3 +14,14 @@ for setting, valve_type in pairs(constants.setting_to_valve_type) do
         },
     })
 end
+
+data:extend({
+    {
+        type = "int-setting",
+        name = "valves-pump-speed",
+        setting_type = "startup",
+        minimum_value = 60,
+        maximum_value = 24000,
+        default_value = 1200,
+    },
+})

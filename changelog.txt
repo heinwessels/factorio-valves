@@ -1,4 +1,9 @@
 ---------------------------------------------------------------------------------------------------
+Version: 1.2.0
+Date: ??.??.2025
+  Features:
+    - Added a startup setting for the overflow, top-up and one-way valves' pump speed when it's open.
+---------------------------------------------------------------------------------------------------
 Version: 1.1.7
 Date: 02.12.2024
   Compatibility:
