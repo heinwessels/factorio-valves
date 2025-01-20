@@ -1,8 +1,11 @@
 ---------------------------------------------------------------------------------------------------
 Version: 1.2.0
-Date: ??.??.2025
+Date: 20.01.2025
   Features:
     - Added a startup setting for the overflow, top-up and one-way valves' pump speed when it's open.
+  Compatibility:
+    - Recipe and required technology is now compatible with more mods.
+    - [PyIndustry] Valve recipe and required technology is now based on deprecated Py valves instead of pump.
 ---------------------------------------------------------------------------------------------------
 Version: 1.1.7
 Date: 02.12.2024

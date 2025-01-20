@@ -5,29 +5,6 @@ local sounds = require("__base__.prototypes.entity.sounds")
 
 local constants = require("__valves__.constants")
 
----@type data.TechnologyPrototype?
-local tech_to_unlock
-for _, technology in pairs(data.raw.technology) do
-    if technology.effects then			
-        for index, effect in pairs(technology.effects) do
-            if effect.type == "unlock-recipe" then
-                if effect.recipe == "pump" then
-                  tech_to_unlock = technology
-                  for valve_type in pairs(constants.valve_types) do
-                    table.insert(tech_to_unlock.effects, index, {
-                      type = "unlock-recipe",
-                      recipe = "valves-"..valve_type
-                    })
-                  end
-
-                  break
-                end
-            end
-        end
-        if tech_to_unlock then break end
-    end
-end
-
 ---@type table<ValveType, data.PipeConnectionDefinition[]>
 local valve_pipe_connections = {
   ["overflow"] = {
@@ -43,20 +20,6 @@ local valve_pipe_connections = {
     {connection_type = "linked", flow_direction = "input", linked_connection_id=31113 - 1 }
   }
 }
-
----@type data.IngredientPrototype?
-local ingredients
-for _, recipe in pairs(data.raw.recipe) do
-  for _, result in pairs(recipe.results or { }) do
-    if result.type == "item" then
-        if result.name == "pump" then
-          ingredients = recipe.ingredients
-          break
-        end
-    end
-  end
-  if ingredients then break end
-end
 
 local function create_valve(valve_type)
   local name = "valves-"..valve_type
@@ -78,8 +41,7 @@ local function create_valve(valve_type)
         type = "recipe",
         name = name,
         energy_required = 2,
-        enabled = tech_to_unlock == nil,
-        ingredients = ingredients,
+        ingredients = { }, -- Determined in data-updates
         results = {{type="item", name=name, amount=1}}
       },
       {
