@@ -10,7 +10,9 @@ This is a fully standalone mod, even though it's uses the techniques used in [Co
 - **Numpad +**: Increase threshold for overflow or top-up valves.
 - **Numpad -**: Decrease threshold for overflow or top-up valves.
 
-**Note:** The default threshold when placed can be changed in settings.
+# Settings
+- Default thresholds for overflow and top-up valves.
+- A startup setting for the valves' pump speed when it's open.
 
 ## Compatibility
 Should be comptatibile with most mods. If it's not compatible, please let me know.
