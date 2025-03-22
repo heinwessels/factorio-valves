@@ -12,12 +12,10 @@ function configuration.deduce_type(behaviour)
     local first = condition.first_signal and condition.first_signal.name
     if not first then return end
 
-    if first == "signal-anything" then
-        if condition.comparator == ">" then
+    if first == "signal-anything" and condition.comparator == ">" then
             return "overflow"
-        else
+    elseif first == "signal-everything" and condition.comparator == "<" then
             return "top_up"
-        end
     elseif first == "signal-check" and condition.comparator == ">" then
         return "one_way"
     end
