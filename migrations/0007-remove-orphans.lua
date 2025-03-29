@@ -3,6 +3,8 @@
 -- multiple hidden guages are stacked underneath a valve. We need to
 -- then call rebuild to fix everything.
 
+do return end
+
 for _, surface in pairs(game.surfaces) do
     for _, entity in pairs(surface.find_entities_filtered{ name = {
         "valves-guage-input",

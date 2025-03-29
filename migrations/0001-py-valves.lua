@@ -1,5 +1,6 @@
 -- This migration turns all the old 1.1 py-valves into a configurable valve
 -- with the correct circuit conditions
+do return end
 
 if not script.active_mods["pyindustry"] then return end
 

@@ -1,158 +1,162 @@
 local item_sounds = require("__base__.prototypes.item_sounds")
-local item_tints = require("__base__.prototypes.item-tints")
 local hit_effects = require("__base__.prototypes.entity.hit-effects")
-local sounds = require("__base__.prototypes.entity.sounds")
 
 local constants = require("__valves__.constants")
 
----@type table<ValveType, data.PipeConnectionDefinition[]>
-local valve_pipe_connections = {
-  ["overflow"] = {
-    { direction = defines.direction.south, position = {0, 0}, flow_direction = "output" },
-    { connection_type = "linked", flow_direction = "input", linked_connection_id=31113 - 1 }
-  },
-  ["top_up"] = {
-    { connection_type = "linked", flow_direction = "output", linked_connection_id=31113 + 1 },
-    { direction = defines.direction.north, position = {0, 0}, flow_direction = "input" }
-  },
-  ["one_way"] = {
-    {connection_type = "linked", flow_direction = "output", linked_connection_id=31113 + 1 },
-    {connection_type = "linked", flow_direction = "input", linked_connection_id=31113 - 1 }
-  }
+local to_vanilla_type = {
+  ["overflow"] = "overflow",
+  ["top_up"] = "top-up",
+  ["one_way"] = "one-way",
 }
 
-local function create_valve(valve_type)
-  local name = "valves-"..valve_type
+-- TODO: Move to settings
+local default_thresholds = {
+  ["overflow"] = 80,
+  ["top_up"] = 50,
+}
+
+local function create_valve_entity(valve_type, threshold)
   data:extend{
-      {
-        type = "item",
-        name = name,
-        icon = "__valves__/graphics/"..valve_type.."/icon.png",
-        subgroup = "energy-pipe-distribution",
-        order = "b[pipe]-d["..name.."]",
-        inventory_move_sound = item_sounds.fluid_inventory_move,
-        pick_sound = item_sounds.fluid_inventory_pickup,
-        drop_sound = item_sounds.fluid_inventory_move,
-        place_result = name,
-        stack_size = 20,
-        random_tint_color = item_tints.iron_rust
+    {
+      type = "valve",
+      name = "valves-"..valve_type..(threshold and ("-"..threshold) or ""),
+      icon = "__valves__/graphics/"..valve_type.."/icon.png",
+      flags = {"placeable-neutral", "player-creation", "hide-alt-info"},
+      localised_description = {"",
+        {"entity-description.valves-"..valve_type},
+        " ",
+        {"valves.more-in-factoriopedia"},
       },
-      {
-        type = "recipe",
-        name = name,
-        energy_required = 2,
-        ingredients = { }, -- Determined in data-updates
-        results = {{type="item", name=name, amount=1}}
+      factoriopedia_description = {"",
+        {"entity-description.valves-"..valve_type},
+        valve_type ~= "one_way" and {"valves.valve-shortcuts"} or nil,
+        valve_type ~= "one_way" and {"valves.threshold-settings"} or nil,
       },
-      {
-          type = "pump",
-          name = name,
-          icon = "__valves__/graphics/"..valve_type.."/icon.png",
-          flags = {"placeable-neutral", "player-creation", "hide-alt-info"},
-          localised_description = {"",
-            {"entity-description."..name},
-            " ",
-            {"valves.more-in-factoriopedia"},
-          },
-          factoriopedia_description = {"",
-            {"entity-description."..name},
-            valve_type ~= "one_way" and {"valves.valve-shortcuts"} or nil,
-            valve_type ~= "one_way" and {"valves.threshold-settings"} or nil,
-          },
-          minable = {mining_time = 0.2, result = name},
-          allow_copy_paste = false, -- Because we can't detect pasting blueprint over existing entity.
-          max_health = 180,
-          fast_replaceable_group = "pipe",
-          corpse = "pump-remnants",
-          dying_explosion = "pump-explosion",
-          collision_box = {{-0.29, -0.45}, {0.29, 0.45}},
-          selection_box = {{-0.5, -0.5}, {0.5, 0.5}},
-          icon_draw_specification = {scale = 0.5},
-          working_sound =
-          {
-            sound = { filename = "__base__/sound/pump.ogg", volume = 0.3 },
-          },
-          damaged_trigger_effect = hit_effects.entity(),
-          resistances =
-          {
-            {
-              type = "fire",
-              percent = 80
-            },
-            {
-              type = "impact",
-              percent = 30
-            }
-          },
-          fluid_box =
-          {
-            volume = 400,
-            pipe_covers = pipecoverspictures(),
-            pipe_connections = valve_pipe_connections[valve_type],
-            hide_connection_info = true,
-          },
-          energy_source = { type = "void" },
-          energy_usage = "1W",
-          pumping_speed = settings.startup["valves-pump-speed"].value / 60, --[[@as number value given per second, convert to per tick]]
-          impact_category = "metal",
-          open_sound = sounds.machine_open,
-          close_sound = sounds.machine_close,
 
-          animations =
-          {
-            north =
-            {
-              filename = "__valves__/graphics/"..valve_type.."/north.png",
-              width = 128,
-              height = 128,
-              scale = 0.5,
-              line_length = 1,
-              frame_count = 1,
-              animation_speed = 1,
-            },
-            east =
-            {
-              filename = "__valves__/graphics/"..valve_type.."/east.png",
-              width = 128,
-              height = 128,
-              scale = 0.5,
-              line_length = 1,
-              frame_count = 1,
-              animation_speed = 1,
-            },
-            south =
-            {
-              filename = "__valves__/graphics/"..valve_type.."/south.png",
-              width = 128,
-              height = 128,
-              scale = 0.5,
-              line_length = 1,
-              frame_count = 1,
-              animation_speed = 1,
-            },
-            west =
-            {
-              filename = "__valves__/graphics/"..valve_type.."/west.png",
-              width = 128,
-              height = 128,
-              scale = 0.5,
-              line_length = 1,
-              frame_count = 1,
-              animation_speed = 1,
-            }
-          },
+      mode = to_vanilla_type[valve_type],
+      threshold = threshold and threshold / 100 or nil, -- Threshold given in percentage
+      flow_rate = settings.startup["valves-pump-speed"].value / 60, --[[@as number value given per second, convert to per tick]]
 
-          circuit_connector = circuit_connector_definitions.create_vector(universal_connector_template, {
-            { variation = 24, main_offset = util.by_pixel(-15/2-3, -8.5/2), shadow_offset = util.by_pixel(0, -0.5), show_shadow = false },
-            { variation = 26, main_offset = util.by_pixel(13.5/2, 4.5/2), shadow_offset = util.by_pixel(-7, -12.5), show_shadow = true },
-            { variation = 24, main_offset = util.by_pixel(-14.5/2-3, -8.5/2), shadow_offset = util.by_pixel(-12.5, 6), show_shadow = false },
-            { variation = 26, main_offset = util.by_pixel(-16/2, 3.5/2), shadow_offset = util.by_pixel(-14, 13.5), show_shadow = true },
-          }),
-          circuit_wire_max_distance = default_circuit_wire_max_distance
+      minable = { mining_time = 0.2, result = "valves-"..valve_type },
+      allow_copy_paste = false, -- Because we can't detect pasting blueprint over existing entity.
+      max_health = 180,
+      fast_replaceable_group = "pipe",
+      corpse = "pump-remnants",
+      dying_explosion = "pump-explosion",
+      collision_box = {{-0.29, -0.45}, {0.29, 0.45}},
+      selection_box = {{-0.5, -0.5}, {0.5, 0.5}},
+      icon_draw_specification = {scale = 0.5},
+      working_sound =
+      {
+        sound = { filename = "__base__/sound/pump.ogg", volume = 0.3 },
       },
+      damaged_trigger_effect = hit_effects.entity(),
+      resistances =
+      {
+        {
+          type = "fire",
+          percent = 80
+        },
+        {
+          type = "impact",
+          percent = 30
+        }
+      },
+      fluid_box =
+      {
+        volume = 400,
+        pipe_covers = pipecoverspictures(),
+        pipe_connections = {
+          {direction = defines.direction.north, position = {0, 0}, flow_direction = "output"},
+          {direction = defines.direction.south, position = {0, 0}, flow_direction = "input-output"},
+        },
+        hide_connection_info = true,
+      },
+      impact_category = "metal",
+
+      -- TODO: Temporary, remove me.
+      sprite = {filename = "__base__/graphics/entity/valve/valve.png", size = 64, scale = 0.5},
+
+      animations =
+      {
+        north =
+        {
+          filename = "__valves__/graphics/"..valve_type.."/north.png",
+          width = 128,
+          height = 128,
+          scale = 0.5,
+          line_length = 1,
+          frame_count = 1,
+          animation_speed = 1,
+        },
+        east =
+        {
+          filename = "__valves__/graphics/"..valve_type.."/east.png",
+          width = 128,
+          height = 128,
+          scale = 0.5,
+          line_length = 1,
+          frame_count = 1,
+          animation_speed = 1,
+        },
+        south =
+        {
+          filename = "__valves__/graphics/"..valve_type.."/south.png",
+          width = 128,
+          height = 128,
+          scale = 0.5,
+          line_length = 1,
+          frame_count = 1,
+          animation_speed = 1,
+        },
+        west =
+        {
+          filename = "__valves__/graphics/"..valve_type.."/west.png",
+          width = 128,
+          height = 128,
+          scale = 0.5,
+          line_length = 1,
+          frame_count = 1,
+          animation_speed = 1,
+        }
+      }
+    }
   }
 end
 
+local function create_valve_prototypes(valve_type)
+  local default_threshold = default_thresholds[valve_type]
+  data:extend{
+    {
+      type = "item",
+      name = "valves-"..valve_type,
+      icon = "__valves__/graphics/"..valve_type.."/icon.png",
+      subgroup = "energy-pipe-distribution",
+      order = "b[pipe]-d[valves-"..valve_type.."]",
+      inventory_move_sound = item_sounds.fluid_inventory_move,
+      pick_sound = item_sounds.fluid_inventory_pickup,
+      drop_sound = item_sounds.fluid_inventory_move,
+      place_result = "valves-"..valve_type..( default_threshold and ("-"..default_threshold) or "" ),
+      stack_size = 20,
+    },
+    {
+      type = "recipe",
+      name = "valves-"..valve_type,
+      energy_required = 2,
+      ingredients = { }, -- Determined in data-updates
+      results = {{type="item", name="valves-"..valve_type, amount=1}}
+    }
+  }
+
+  if valve_type == "one_way" then
+    create_valve_entity(valve_type)
+  else
+    for threshold = 0, 100, 10 do
+      create_valve_entity(valve_type, threshold)
+    end
+  end
+end
+
 for valve_type in pairs(constants.valve_types) do
-  create_valve(valve_type)
+  create_valve_prototypes(valve_type)
 end
