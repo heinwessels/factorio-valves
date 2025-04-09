@@ -23,15 +23,15 @@ local function on_selected_entity_changed(event)
 
     local entity = player.selected
     if not (entity and entity.valid) then return end
-    if not constants.valve_names[entity.name] then return end -- Ignore ghosts
-    if constants.valve_names[entity.name] == "one_way" then return end -- Doesn't have a threshold
+    if not constants.valve_names[entity.name] then return end -- TODO: Also show for ghosts
+    local valve_type = constants.valve_names[entity.name]
+    if valve_type == "one_way" then return end -- Doesn't have a threshold
+    local threshold = entity.valve_threshold_override or constants.default_thresholds[valve_type]
 
-    local control_behaviour = entity.get_or_create_control_behavior()
-    local constant = control_behaviour.circuit_condition.constant
-    if not constant then return end
-    ---@cast control_behaviour LuaPumpControlBehavior
+    -- TODO Round the value so that it looks better.
+
     player_data.render_threshold = rendering.draw_text{
-        text = tostring(constant),
+        text = string.format("%02d", threshold * 100),
         surface = entity.surface,
         target = entity,
         color = {1, 1, 1, 0.8},
