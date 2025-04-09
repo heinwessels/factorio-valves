@@ -7,7 +7,7 @@ for setting, valve_type in pairs(constants.setting_to_valve_type) do
         {
             type = "int-setting",
             name = setting,
-            setting_type = "runtime-global",
+            setting_type = "startup",
             minimum_value = 0,
             maximum_value = 100,
             default_value = default_value,

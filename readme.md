@@ -23,5 +23,6 @@ This valve has no measurable performance impact. The worst case is a using a pum
 
 ## Credits
 - _Boskid_ for adding the ability to link pipes to the Factorio engine.
+- [raiguard](https://mods.factorio.com/user/raiguard) for adding native valve prototypes.
 - [GotLag and Snouz](https://mods.factorio.com/mod/Flow%20Control) for the high quality graphics of the old pump sprite. 
 - _justarandomgeek_ for the [Factorio Modding Toolkit](https://marketplace.visualstudio.com/items?itemName=justarandomgeek.factoriomod-debug), without which this mod would not have been possible.
