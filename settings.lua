@@ -1,7 +1,12 @@
 local constants = require("__valves__.constants")
 
+local default_threshold_settings = {
+    overflow = 0.8,
+    top_up = 0.5,
+}
+
 for setting, valve_type in pairs(constants.setting_to_valve_type) do
-    local default_value = constants.valve_types[valve_type].constant
+    local default_value = default_threshold_settings[valve_type]
     assert(default_value, "unexpected condition for valve type "..valve_type)
     data:extend({
         {
