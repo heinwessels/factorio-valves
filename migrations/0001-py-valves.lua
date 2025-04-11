@@ -24,7 +24,7 @@ for _, surface in pairs(game.surfaces) do
                 direction = util.oppositedirection(direction)
             end
 
-            local valve = surface.create_entity{
+            surface.create_entity{
                 name = config.name,
                 position = position,
                 force = force,
