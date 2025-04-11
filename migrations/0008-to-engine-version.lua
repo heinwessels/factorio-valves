@@ -1,9 +1,8 @@
 --- First we changed something about player data so just destroy it completely.
 --- Including the render objects. It will be recreated when the player selects a valve again.
 for _, player_data in pairs(storage.players) do
-    local render_object = player_data.render_threshold and player_data.render_threshold.render_object or nil
-    if render_object then
-        render_object.destroy()
+    if player_data.render_threshold then
+        player_data.render_threshold.destroy()
     end
 end
 storage.players = { }
@@ -23,6 +22,7 @@ local constants = require("__valves__.constants")
 --- with a new one.
 ---@param old_valve LuaEntity
 local function replace_valve(old_valve)
+    local surface = old_valve.surface
     local position = old_valve.position
     local direction = old_valve.direction
     local force = old_valve.force
@@ -36,14 +36,16 @@ local function replace_valve(old_valve)
         ---@cast control_behaviour LuaPumpControlBehavior
         local circuit_condition = control_behaviour.circuit_condition --[[@as CircuitCondition]]
         threshold = circuit_condition.constant or constants.default_thresholds[valve_type]
+        threshold = threshold / 100 -- Convert to a fraction which the new system uses
+        threshold = math.min(1, math.max(0, threshold)) -- Clamp to 0-1
     end
 
     -- We need to destroy the old one first so that the fluid connections
     -- so are recreated correctly I think.
     old_valve.destroy{raise_destroy = true} -- Tell other mods, we don't listen anyway
 
-    local new_valve = old_valve.surface.create_entity{
-        name = "valves-" .. old_valve.name,
+    local new_valve = surface.create_entity{
+        name = "valves-" .. valve_type,
         position = position,
         force = force,
         direction = direction,
