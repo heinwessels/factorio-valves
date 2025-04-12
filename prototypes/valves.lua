@@ -5,7 +5,7 @@ local sounds = require("__base__.prototypes.entity.sounds")
 
 local constants = require("__valves__.constants")
 
-local to_vanilla_type = {
+local to_vanilla_mode = {
   ["overflow"] = "overflow",
   ["top_up"] = "top-up",
   ["one_way"] = "one-way",
@@ -40,18 +40,18 @@ local function create_valve(valve_type)
         icon = "__valves__/graphics/"..valve_type.."/icon.png",
         flags = {"placeable-neutral", "player-creation", "hide-alt-info"},
         localised_description = {"",
-          {"entity-description."..name},
+          {"entity-description."..to_vanilla_mode[valve_type].."-valve"},
           " ",
           {"valves.more-in-factoriopedia"},
         },
         factoriopedia_description = {"",
-          {"entity-description."..name},
+        {"entity-description."..to_vanilla_mode[valve_type].."-valve"},
           valve_type ~= "one_way" and {"valves.valve-shortcuts"} or nil,
           valve_type ~= "one_way" and {"valves.threshold-settings"} or nil,
         },
         minable = {mining_time = 0.2, result = name},
 
-        mode = to_vanilla_type[valve_type],
+        mode = to_vanilla_mode[valve_type],
         threshold = (function()
           if valve_type == "overflow" or valve_type == "top_up" then
             return settings.startup["valves-default-threshold-"..valve_type].value /  100

@@ -21,14 +21,16 @@ local constants = require("__valves__.constants")
 --- to turn them into legacy versions. So we just find all those and replace them
 --- with a new one.
 ---@param old_valve LuaEntity
-local function replace_valve(old_valve)
+---@param valve_type ValveType
+local function replace_valve(old_valve, valve_type)
     local surface = old_valve.surface
     local position = old_valve.position
     local direction = old_valve.direction
     local force = old_valve.force
     local health = old_valve.health
-    local valve_type = legacy_name_to_type[old_valve.name]
     local quality = old_valve.quality
+    local to_be_deconstructed = old_valve.to_be_deconstructed()
+    local is_ghost = old_valve.name == "entity-ghost"
     local threshold
 
     if valve_type == "overflow" or valve_type == "top_up" then
@@ -45,23 +47,29 @@ local function replace_valve(old_valve)
     old_valve.destroy{raise_destroy = true} -- Tell other mods, we don't listen anyway
 
     local new_valve = surface.create_entity{
-        name = "valves-" .. valve_type,
+        name = is_ghost and "entity-ghost" or "valves-" .. valve_type,
+        inner_name = is_ghost and "valves-" .. valve_type or nil,
         position = position,
         force = force,
         direction = direction,
         quality = quality,
         raise_built = true, -- We listen to this, but doesn't really matter
     }
-    new_valve.health = health
-    if threshold then
-        new_valve.valve_threshold_override = threshold
+    if not new_valve then return end -- If the entity was destroyed in the meantime, we don't care
+    if threshold then new_valve.valve_threshold_override = threshold end
+    if not is_ghost then
+        new_valve.health = health
+        if to_be_deconstructed then new_valve.order_deconstruction(force) end -- Will lose player and undo queue. Meh
     end
 end
 
 for _, surface in pairs(game.surfaces) do
-    for old_legacy_name in pairs(legacy_name_to_type) do
+    for old_legacy_name, valve_type in pairs(legacy_name_to_type) do
         for _, old_valve in pairs(surface.find_entities_filtered{name = old_legacy_name}) do
-            replace_valve(old_valve)
+            replace_valve(old_valve, valve_type)
+        end
+        for _, old_valve_ghost in pairs(surface.find_entities_filtered{name = "entity-ghost", ghost_name = old_legacy_name}) do
+            replace_valve(old_valve_ghost, valve_type)
         end
     end
 end

@@ -7,6 +7,7 @@ local function create_valve(valve_type)
             name = "valves-"..valve_type.."-legacy",
             icon = "__valves__/graphics/"..valve_type.."/icon.png",
             flags = {"placeable-neutral", "player-creation", "hide-alt-info"},
+            placeable_by = {item = "valves-"..valve_type, count = 1}, -- Needed so migration don't destory the ghosts.
             hidden = true,
             max_health = 180,
             collision_box = {{-0.29, -0.45}, {0.29, 0.45}},
