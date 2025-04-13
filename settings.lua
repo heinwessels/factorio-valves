@@ -1,8 +1,8 @@
 local constants = require("__valves__.constants")
 
 local default_threshold_settings = {
-    overflow = 0.8,
-    top_up = 0.5,
+    overflow = 80,
+    top_up = 50,
 }
 
 for setting, valve_type in pairs(constants.setting_to_valve_type) do

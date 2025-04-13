@@ -1,4 +1,5 @@
 local constants = require("__valves__.constants")
+local migrator = require("__valves__.scripts.migrator")
 
 local builder = { }
 
@@ -22,6 +23,10 @@ local function on_entity_created(event)
     elseif entity.name == "entity-ghost" and constants.valve_names[entity.ghost_name] then
         builder.build(entity)
     end
+
+    -- Also migrate legacy blueprints when placed.
+    local migration_data = migrator.should_migrate(entity)
+    if migration_data then migrator.migrate(entity, migration_data) end
 end
 
 builder.events = {

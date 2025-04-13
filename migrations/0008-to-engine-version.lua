@@ -7,69 +7,20 @@ for _, player_data in pairs(storage.players) do
 end
 storage.players = { }
 
-
----@type table<string, string>
-local legacy_name_to_type = {
-    ["valves-overflow-legacy"]  = "overflow",
-    ["valves-top_up-legacy"]    = "top_up",
-    ["valves-one_way-legacy"]   = "one_way",
-}
-
-local constants = require("__valves__.constants")
-
---- Now we need to migrate our old valves to the new ones. We used a json migration
---- to turn them into legacy versions. So we just find all those and replace them
---- with a new one.
----@param old_valve LuaEntity
----@param valve_type ValveType
-local function replace_valve(old_valve, valve_type)
-    local surface = old_valve.surface
-    local position = old_valve.position
-    local direction = old_valve.direction
-    local force = old_valve.force
-    local health = old_valve.health
-    local quality = old_valve.quality
-    local to_be_deconstructed = old_valve.to_be_deconstructed()
-    local is_ghost = old_valve.name == "entity-ghost"
-    local threshold
-
-    if valve_type == "overflow" or valve_type == "top_up" then
-        local control_behaviour = old_valve.get_or_create_control_behavior()
-        ---@cast control_behaviour LuaPumpControlBehavior
-        local circuit_condition = control_behaviour.circuit_condition --[[@as CircuitCondition]]
-        threshold = circuit_condition.constant or constants.default_thresholds[valve_type]
-        threshold = threshold / 100 -- Convert to a fraction which the new system uses
-        threshold = math.min(1, math.max(0, threshold)) -- Clamp to 0-1
-    end
-
-    -- We need to destroy the old one first so that the fluid connections
-    -- so are recreated correctly I think.
-    old_valve.destroy{raise_destroy = true} -- Tell other mods, we don't listen anyway
-
-    local new_valve = surface.create_entity{
-        name = is_ghost and "entity-ghost" or "valves-" .. valve_type,
-        inner_name = is_ghost and "valves-" .. valve_type or nil,
-        position = position,
-        force = force,
-        direction = direction,
-        quality = quality,
-        raise_built = true, -- We listen to this, but doesn't really matter
-    }
-    if not new_valve then return end -- If the entity was destroyed in the meantime, we don't care
-    if threshold then new_valve.valve_threshold_override = threshold end
-    if not is_ghost then
-        new_valve.health = health
-        if to_be_deconstructed then new_valve.order_deconstruction(force) end -- Will lose player and undo queue. Meh
-    end
-end
+--- Now migrate all old legacy valves to the new engine-supported ones.
+local migrator = require("__valves__/scripts/migrator")
+---@type string[]
+local legacy_name_to_type = {"valves-overflow-legacy", "valves-top_up-legacy", "valves-one_way-legacy"}
 
 for _, surface in pairs(game.surfaces) do
-    for old_legacy_name, valve_type in pairs(legacy_name_to_type) do
+    for _, old_legacy_name in pairs(legacy_name_to_type) do
+        local migration_data = migrator.old_valve_to_migration_data[old_legacy_name]
+        assert(migration_data, "Migration data not found for " .. old_legacy_name)
         for _, old_valve in pairs(surface.find_entities_filtered{name = old_legacy_name}) do
-            replace_valve(old_valve, valve_type)
+            migrator.migrate(old_valve, migration_data)
         end
         for _, old_valve_ghost in pairs(surface.find_entities_filtered{name = "entity-ghost", ghost_name = old_legacy_name}) do
-            replace_valve(old_valve_ghost, valve_type)
+            migrator.migrate(old_valve_ghost, migration_data)
         end
     end
 end

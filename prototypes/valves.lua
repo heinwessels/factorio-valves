@@ -13,6 +13,10 @@ local to_vanilla_mode = {
 
 local function create_valve(valve_type)
   local name = "valves-"..valve_type
+  local threshold = nil
+  if valve_type == "overflow" or valve_type == "top_up" then
+    threshold = settings.startup["valves-default-threshold-"..valve_type].value /  100
+  end
   data:extend{
       {
         type = "item",
@@ -50,14 +54,8 @@ local function create_valve(valve_type)
           valve_type ~= "one_way" and {"valves.threshold-settings"} or nil,
         },
         minable = {mining_time = 0.2, result = name},
-
         mode = to_vanilla_mode[valve_type],
-        threshold = (function()
-          if valve_type == "overflow" or valve_type == "top_up" then
-            return settings.startup["valves-default-threshold-"..valve_type].value /  100
-          end
-        end)(),
-
+        threshold = threshold,
         max_health = 180,
         fast_replaceable_group = "pipe",
         corpse = "pump-remnants",
