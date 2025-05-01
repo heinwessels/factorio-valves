@@ -3,6 +3,7 @@
 do return end
 
 if not script.active_mods["pyindustry"] then return end
+if settings.startup["valves-disable-py-migration"].value then return end
 
 local util = require("util")
 
