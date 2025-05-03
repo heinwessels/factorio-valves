@@ -1,10 +1,10 @@
 -- This migration turns all the old 1.1 py-valves into a configurable valve
 -- with the correct circuit conditions
 
+local util = require("util")
+
 if not script.active_mods["pyindustry"] then return end
 if settings.startup["valves-disable-py-migration"].value then return end
-
-local util = require("util")
 
 local replace_behaviour = {
     ["py-overflow-valve"]   = { name = "valves-overflow" },
