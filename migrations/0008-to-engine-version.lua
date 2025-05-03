@@ -1,6 +1,6 @@
 --- First we changed something about player data so just destroy it completely.
 --- Including the render objects. It will be recreated when the player selects a valve again.
-for _, player_data in pairs(storage.players) do
+for _, player_data in pairs(storage.players or { }) do
     if player_data.render_threshold then
         player_data.render_threshold.destroy()
     end

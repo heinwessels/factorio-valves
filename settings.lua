@@ -37,5 +37,6 @@ data:extend({
         setting_type = "startup",
         order = "z[migration]-a[py]",
         default_value = false,
+        hidden = mods["pyindustry"] == nil
     },
 })
