@@ -82,7 +82,6 @@ function migrator.migrate(old_valve, migration_data)
     local valve_type = migration_data.valve_type
     local threshold = migration_data.get_threshold(old_valve, old_valve.name, valve_type)
     -- threshold = threshold or constants.default_thresholds[valve_type]
-    game.print("Threshold: " .. threshold .. " for " .. old_valve.unit_number)
     local new_valve = migrator.replace_valve_entity(old_valve, valve_type)
     if new_valve and valve_type ~= "one_way" then
         new_valve.valve_threshold_override = threshold
