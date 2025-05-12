@@ -68,9 +68,9 @@ local function create_valve(valve_type)
         collision_box = {{-0.29, -0.45}, {0.29, 0.45}},
         selection_box = {{-0.5, -0.5}, {0.5, 0.5}},
         icon_draw_specification = {scale = 0.5},
-        working_sound =
-        {
-          sound = { filename = "__base__/sound/pump.ogg", volume = 0.3 },
+        working_sound =    {
+          sound = {filename = "__base__/sound/pump.ogg", volume = 0.3, audible_distance_modifier = 0.5},
+          max_sounds_per_prototype = 2
         },
         damaged_trigger_effect = hit_effects.entity(),
         resistances =
