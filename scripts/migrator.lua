@@ -19,7 +19,6 @@ local determine_threshold_for_type = {
         ---@cast control_behaviour LuaPumpControlBehavior
         local circuit_condition = control_behaviour.circuit_condition --[[@as CircuitCondition]]
         local threshold = circuit_condition.constant
-        game.print("Threshold: " .. threshold .. " for " .. entity.unit_number)
         if not threshold then return end
         threshold = threshold / 100 -- Convert to a fraction which the new system uses
         return math.min(1, math.max(0, threshold)) -- Clamp to 0-1
