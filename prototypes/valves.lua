@@ -11,11 +11,6 @@ local to_vanilla_mode = {
   ["one_way"] = "one-way",
 }
 
-local item_sub_group = "energy-pipe-distribution"
-if data.raw["item"]["pump"] then
-  item_sub_group = data.raw["item"]["pump"].subgroup
-end
-
 local function create_valve(valve_type)
   local name = "valves-"..valve_type
   local threshold = nil
@@ -27,7 +22,7 @@ local function create_valve(valve_type)
         type = "item",
         name = name,
         icon = "__valves__/graphics/"..valve_type.."/icon.png",
-        subgroup = item_sub_group,
+        subgroup = "energy-pipe-distribution",
         order = "b[pipe]-d["..name.."]",
         inventory_move_sound = item_sounds.fluid_inventory_move,
         pick_sound = item_sounds.fluid_inventory_pickup,

@@ -56,7 +56,14 @@ for _, recipe in pairs(data.raw.recipe) do
   if ingredients then break end
 end
 
+-- Make sure the valves are grouped with the pumps
+local item_sub_group = "energy-pipe-distribution"
+if data.raw["item"]["pump"] then
+  item_sub_group = data.raw["item"]["pump"].subgroup
+end
+
 for valve_type in pairs(constants.valve_types) do
   data.raw.recipe["valves-"..valve_type].enabled = tech_to_unlock == nil
   data.raw.recipe["valves-"..valve_type].ingredients = ingredients
+  data.raw.item["valves-"..valve_type].subgroup = item_sub_group
 end
