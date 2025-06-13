@@ -1,5 +1,15 @@
 local constants = require("constants")
 
+-- This functionionality is to warn the player that there is unintended behaviour
+-- when a valve's output is connected to a pump's input. In this scenario the pump
+-- will pull fluid regardless of the fluid levels or the pump's threshold.
+-- According to raiguard thiss is not intended behaviour by the game engine
+-- but a limitation due to how fluidboxes are created for different entities.
+-- I created a poll on the Py Discord to ask if I should show a warning or just destroy
+-- the valve, and out of 134 votes 87% of players only wanted a non-destructive warning.
+-- So we will only show a warning.
+
+
 local warnings = { }
 
 ---@param fluidbox LuaFluidBox
@@ -68,30 +78,46 @@ for pump_name, prototype in pairs(prototypes.get_entity_filtered({{filter = "typ
     end
 end
 
+---@param player LuaPlayer
 ---@param entity LuaEntity the valve or pump
----@param handler function
-local function handle_possible_bad_connection(entity, handler)
-    local has_bad_connection = handler(entity)
-    game.print(has_bad_connection and "bad" or "good")
+---@param has_bad_connection_handler function
+local function handle_possible_bad_connection(player, entity, has_bad_connection_handler)
+    local has_bad_connection = has_bad_connection_handler(entity)
+    if not has_bad_connection then return end
+
+    -- We've got a bad connection! Let's warn the player.
+
+    player.play_sound{ path = "utility/cannot_build" }
+
+    player.create_local_flying_text{
+        text = {"valves.warning-bad-connection"},
+        position = entity.position,
+        surface = entity.surface,
+        color = {r = 1, g = 0, b = 0},
+        speed = 0.7,
+        time_to_live = 120,
+    }
 end
 
 ---@param event EventData.on_robot_built_entity|EventData.on_built_entity|EventData.script_raised_built|EventData.script_raised_revive
 local function on_entity_created(event)
     local entity = event.entity
+    local player = game.get_player(event.player_index) ---@cast player -?
     if handler_for_name[entity.name] then
-        handle_possible_bad_connection(entity, handler_for_name[entity.name])
+        handle_possible_bad_connection(player, entity, handler_for_name[entity.name])
     elseif entity.name == "entity-ghost" and handler_for_name[entity.ghost_name] then
-        handle_possible_bad_connection(entity, handler_for_name[entity.ghost_name])
+        handle_possible_bad_connection(player, entity, handler_for_name[entity.ghost_name])
     end
 end
 
 ---@param event EventData.on_player_rotated_entity
 local function on_player_rotated_entit(event)
     local entity = event.entity
+    local player = game.get_player(event.player_index) ---@cast player -?
     if handler_for_name[entity.name] then
-        handle_possible_bad_connection(entity, handler_for_name[entity.name])
+        handle_possible_bad_connection(player, entity, handler_for_name[entity.name])
     elseif entity.name == "entity-ghost" and handler_for_name[entity.ghost_name] then
-        handle_possible_bad_connection(entity, handler_for_name[entity.ghost_name])
+        handle_possible_bad_connection(player, entity, handler_for_name[entity.ghost_name])
     end
 end
 
