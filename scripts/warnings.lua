@@ -78,7 +78,7 @@ for pump_name, prototype in pairs(prototypes.get_entity_filtered({{filter = "typ
     end
 end
 
----@param player LuaPlayer
+---@param player LuaPlayer?
 ---@param entity LuaEntity the valve or pump
 ---@param has_bad_connection_handler function
 local function handle_possible_bad_connection(player, entity, has_bad_connection_handler)
@@ -87,22 +87,27 @@ local function handle_possible_bad_connection(player, entity, has_bad_connection
 
     -- We've got a bad connection! Let's warn the player.
 
-    player.play_sound{ path = "utility/cannot_build" }
-
-    player.create_local_flying_text{
-        text = {"valves.flying-warning-bad-connection"},
-        position = entity.position,
-        surface = entity.surface,
-        color = {r = 1, g = 0, b = 0},
-        speed = 0.7,
-        time_to_live = 120,
-    }
+    if player then
+        player.play_sound{ path = "utility/cannot_build" }
+        player.create_local_flying_text{
+            text = {"valves.flying-warning-bad-connection"},
+            position = entity.position,
+            surface = entity.surface,
+            color = {r = 1, g = 0, b = 0},
+            speed = 0.7,
+            time_to_live = 120,
+        }
+    else
+        entity.force.play_sound{ path = "utility/cannot_build" }
+        entity.force.print({"valves.warn-all-found-extended", 1})
+        entity.force.print({"valves.warn-found-at","[entity="..entity.name.."]", entity.gps_tag})
+    end
 end
 
 ---@param event EventData.on_robot_built_entity|EventData.on_built_entity|EventData.script_raised_built|EventData.script_raised_revive
 local function on_entity_created(event)
     local entity = event.entity
-    local player = game.get_player(event.player_index) ---@cast player -?
+    local player = event.player_index and game.get_player(event.player_index) or nil
     if handler_for_name[entity.name] then
         handle_possible_bad_connection(player, entity, handler_for_name[entity.name])
     elseif entity.name == "entity-ghost" and handler_for_name[entity.ghost_name] then
