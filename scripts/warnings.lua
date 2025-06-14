@@ -166,6 +166,7 @@ function warnings.on_configuration_changed()
             for _, valve in pairs(bad_valves) do
                 force.print({"valves.warn-found-at","[entity="..valve.name.."]", valve.gps_tag})
             end
+            force.print({"valves.warn-show-again"})
         end
     end
 end

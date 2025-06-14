@@ -1,4 +1,9 @@
 ---------------------------------------------------------------------------------------------------
+Version: 2.0.3
+Date: ??.06.2025
+  Features:
+    - Warn players when valves are connected to pump in unsupported way. See Factoriopedia or modpage.
+---------------------------------------------------------------------------------------------------
 Version: 2.0.2
 Date: 18.05.2025
   Changes:
