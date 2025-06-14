@@ -17,6 +17,16 @@ local function create_valve(valve_type)
   if valve_type == "overflow" or valve_type == "top_up" then
     threshold = settings.startup["valves-default-threshold-"..valve_type].value /  100
   end
+
+  local factoriopeda_description = {"", 
+    {"entity-description."..to_vanilla_mode[valve_type].."-valve"}
+  }
+  if valve_type ~= "one_way" then
+    table.insert(factoriopeda_description, {"valves.valve-shortcuts"})
+    table.insert(factoriopeda_description, {"valves.threshold-settings"})
+  end
+  table.insert(factoriopeda_description, {"valves.factoriopedia-bad-connections"})
+
   data:extend{
       {
         type = "item",
@@ -48,11 +58,7 @@ local function create_valve(valve_type)
           " ",
           {"valves.more-in-factoriopedia"},
         },
-        factoriopedia_description = {"",
-          {"entity-description."..to_vanilla_mode[valve_type].."-valve"},
-            valve_type ~= "one_way" and {"valves.valve-shortcuts"} or nil,
-            valve_type ~= "one_way" and {"valves.threshold-settings"} or nil,
-        },
+        factoriopedia_description = factoriopeda_description,
         minable = {mining_time = 0.2, result = name},
         mode = to_vanilla_mode[valve_type],
         threshold = threshold,

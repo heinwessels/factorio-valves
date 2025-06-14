@@ -16,6 +16,9 @@ Fully functioning overflow, top-up and one-way(check) as separate entities. The 
 Should be comptatibile with most mods. If it's not compatible, please let me know.
 - **Pyanodons**: Will automatically migrate old Factorio 1.1 valves to their 2.0 counter part.
 
+## Limitation with Pumps
+A valve's output cannot be connected to a pump's input. Due to a game engine limitation the pump will bypass the valve as if it's not there.
+
 # UPS Impact
 These valves use the prototypes provided by the game engine. That means it probably has less of a UPS impact than normal pumps. There are no fluid calculations done in this mod itself.
 
