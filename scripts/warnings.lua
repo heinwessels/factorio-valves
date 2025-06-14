@@ -121,8 +121,9 @@ local function on_player_rotated_entit(event)
     end
 end
 
----@param player LuaPlayer? only available when 
-local function warn_all(player)
+---@param force ForceID
+---@return LuaEntity[]
+local function find_all_bad_connections(force)
     ---@type string[]
     local valve_names_list = {}
     for name, _ in pairs(constants.valve_names) do
@@ -132,29 +133,41 @@ local function warn_all(player)
     ---@type LuaEntity[]
     local bad_valves = {}
     for _, surface in pairs(game.surfaces) do
-        for _, valve in pairs(surface.find_entities_filtered({name = valve_names_list, force = player.force})) do
+        for _, valve in pairs(surface.find_entities_filtered({name = valve_names_list, force = force})) do
             if valve_has_bad_connection(valve) then
                 table.insert(bad_valves, valve)
             end
         end
     end
 
-    if player and #bad_valves == 0 then
-        player.print({"valves.warn-all-found-none"})
-        return
-    end
-
-    player.print({"valves.warn-all-found", #bad_valves})
-    for _, valve in pairs(bad_valves) do
-        player.print({"valves.warn-found-at","[entity="..valve.name.."]", valve.gps_tag})
-    end
+    return bad_valves
 end
 
 function warnings.add_commands()
     commands.add_command("valves-find-bad-connections", {"valves.warn-command-help"}, function(command)
         local player = game.get_player(command.player_index) ---@cast player -?
-        warn_all(player)
+        local bad_valves = find_all_bad_connections(player.force)
+        if #bad_valves == 0 then
+            player.print({"valves.warn-all-found-none"})
+        else
+            player.print({"valves.warn-all-found", #bad_valves})
+            for _, valve in pairs(bad_valves) do
+                player.print({"valves.warn-found-at","[entity="..valve.name.."]", valve.gps_tag})
+            end
+        end
     end)
+end
+
+function warnings.on_configuration_changed()
+    for _, force in pairs(game.forces) do
+        local bad_valves = find_all_bad_connections(force)
+        if #bad_valves > 0 then
+            force.print({"valves.warn-all-found-extended", #bad_valves})
+            for _, valve in pairs(bad_valves) do
+                force.print({"valves.warn-found-at","[entity="..valve.name.."]", valve.gps_tag})
+            end
+        end
+    end
 end
 
 warnings.events = {
