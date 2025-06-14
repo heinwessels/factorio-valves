@@ -90,7 +90,7 @@ local function handle_possible_bad_connection(player, entity, has_bad_connection
     player.play_sound{ path = "utility/cannot_build" }
 
     player.create_local_flying_text{
-        text = {"valves.warning-bad-connection"},
+        text = {"valves.flying-warning-bad-connection"},
         position = entity.position,
         surface = entity.surface,
         color = {r = 1, g = 0, b = 0},
@@ -119,6 +119,42 @@ local function on_player_rotated_entit(event)
     elseif entity.name == "entity-ghost" and handler_for_name[entity.ghost_name] then
         handle_possible_bad_connection(player, entity, handler_for_name[entity.ghost_name])
     end
+end
+
+---@param player LuaPlayer? only available when 
+local function warn_all(player)
+    ---@type string[]
+    local valve_names_list = {}
+    for name, _ in pairs(constants.valve_names) do
+        table.insert(valve_names_list, name)
+    end
+
+    ---@type LuaEntity[]
+    local bad_valves = {}
+    for _, surface in pairs(game.surfaces) do
+        for _, valve in pairs(surface.find_entities_filtered({name = valve_names_list, force = player.force})) do
+            if valve_has_bad_connection(valve) then
+                table.insert(bad_valves, valve)
+            end
+        end
+    end
+
+    if player and #bad_valves == 0 then
+        player.print({"valves.warn-all-found-none"})
+        return
+    end
+
+    player.print({"valves.warn-all-found", #bad_valves})
+    for _, valve in pairs(bad_valves) do
+        player.print({"valves.warn-found-at","[entity="..valve.name.."]", valve.gps_tag})
+    end
+end
+
+function warnings.add_commands()
+    commands.add_command("valves-find-bad-connections", {"valves.warn-command-help"}, function(command)
+        local player = game.get_player(command.player_index) ---@cast player -?
+        warn_all(player)
+    end)
 end
 
 warnings.events = {
