@@ -104,44 +104,100 @@ local function create_valve(valve_type)
         {
           north =
           {
-            filename = "__valves__/graphics/"..valve_type.."/north.png",
-            width = 128,
-            height = 128,
-            scale = 0.5,
-            line_length = 1,
-            frame_count = 1,
-            animation_speed = 1,
+            layers = {
+              {
+                filename = "__valves__/graphics/"..valve_type.."/north.png",
+                width = 128,
+                height = 128,
+                scale = 0.5,
+                line_length = 1,
+                repeat_count = 8,
+                frame_count = 1,
+                animation_speed = 1,
+              },
+              {
+                filename = "__valves__/graphics/anim/north.png",
+                width = 122,
+                height = 128,
+                scale = 0.5,
+                line_length = 8,
+                frame_count = 8,
+                animation_speed = 1,
+              }
+            },
           },
           east =
           {
-            filename = "__valves__/graphics/"..valve_type.."/east.png",
-            width = 128,
-            height = 128,
-            scale = 0.5,
-            line_length = 1,
-            frame_count = 1,
-            animation_speed = 1,
+            layers = {
+              {
+                filename = "__valves__/graphics/"..valve_type.."/east.png",
+                width = 128,
+                height = 128,
+                scale = 0.5,
+                line_length = 1,
+                repeat_count = 8,
+                frame_count = 1,
+                animation_speed = 1,
+              },
+              {
+                filename = "__valves__/graphics/anim/east.png",
+                width = 112,
+                height = 128,
+                scale = 0.5,
+                line_length = 8,
+                frame_count = 8,
+                animation_speed = 1,
+              }
+            },
           },
           south =
           {
-            filename = "__valves__/graphics/"..valve_type.."/south.png",
-            width = 128,
-            height = 128,
-            scale = 0.5,
-            line_length = 1,
-            frame_count = 1,
-            animation_speed = 1,
+            layers = {
+              {
+                filename = "__valves__/graphics/"..valve_type.."/south.png",
+                width = 128,
+                height = 128,
+                scale = 0.5,
+                line_length = 1,
+                repeat_count = 8,
+                frame_count = 1,
+                animation_speed = 1,
+              },
+              {
+                filename = "__valves__/graphics/anim/south.png",
+                width = 92,
+                height = 128,
+                scale = 0.5,
+                line_length = 8,
+                frame_count = 8,
+                animation_speed = 1,
+              }
+            },
           },
           west =
           {
-            filename = "__valves__/graphics/"..valve_type.."/west.png",
-            width = 128,
-            height = 128,
-            scale = 0.5,
-            line_length = 1,
-            frame_count = 1,
-            animation_speed = 1,
-          }
+            layers = {
+              {
+                filename = "__valves__/graphics/"..valve_type.."/west.png",
+                width = 128,
+                height = 128,
+                scale = 0.5,
+                line_length = 1,
+                repeat_count = 8,
+                frame_count = 1,
+                animation_speed = 1,
+              },
+              {
+                filename = "__valves__/graphics/anim/west.png",
+                width = 102,
+                height = 128,
+                scale = 0.5,
+                line_length = 8,
+                frame_count = 8,
+                animation_speed = 1,
+              }
+            },
+          },
         },
       },
   }

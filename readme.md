@@ -25,5 +25,5 @@ These valves use the prototypes provided by the game engine. That means it proba
 ## Credits
 - _Boskid_ for adding the ability to link pipes to the Factorio engine.
 - [raiguard](https://mods.factorio.com/user/raiguard) for adding native valve prototypes.
-- [GotLag and Snouz](https://mods.factorio.com/mod/Flow%20Control) for the high quality graphics of the old pump sprite. 
+- [GotLag and Snouz](https://mods.factorio.com/mod/Flow%20Control) for the high quality graphics of the old pump sprite.
 - _justarandomgeek_ for the [Factorio Modding Toolkit](https://marketplace.visualstudio.com/items?itemName=justarandomgeek.factoriomod-debug), without which this mod would not have been possible.
