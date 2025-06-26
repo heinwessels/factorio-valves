@@ -12,7 +12,7 @@ local function create_valve(valve_type)
             -- though that old blueprints will still work with the old valves.
             -- We could just remove "player-creation" which will only prevent _new_ ghosts,
             -- but that would break all player's blueprints. Let's not do that.
-            
+
             -- So this will be a temporary measure and maybe removed in 2.1.
             -- For now we'll just replace those ghosts when placed.
             placeable_by = {item = "valves-"..valve_type, count = 1},

@@ -18,6 +18,8 @@ end
 ---@param event EventData.on_robot_built_entity|EventData.on_built_entity|EventData.script_raised_built|EventData.script_raised_revive
 local function on_entity_created(event)
     local entity = event.entity
+    if not (entity and entity.valid) then return end
+
     if constants.valve_names[entity.name] then
         builder.build(entity)
     elseif entity.name == "entity-ghost" and constants.valve_names[entity.ghost_name] then
