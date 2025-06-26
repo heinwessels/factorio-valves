@@ -18,17 +18,17 @@ end
 ---@param event EventData.on_robot_built_entity|EventData.on_built_entity|EventData.script_raised_built|EventData.script_raised_revive
 local function on_entity_created(event)
     local entity = event.entity
-    if entity and entity.valid then
-        if constants.valve_names[entity.name] then
-            builder.build(entity)
-        elseif entity.name == "entity-ghost" and constants.valve_names[entity.ghost_name] then
-            builder.build(entity)
-        end
+    if not (entity and entity.valid) then return end
 
-        -- Also migrate legacy blueprints when placed.
-        local migration_data = migrator.should_migrate(entity)
-        if migration_data then migrator.migrate(entity, migration_data) end
+    if constants.valve_names[entity.name] then
+        builder.build(entity)
+    elseif entity.name == "entity-ghost" and constants.valve_names[entity.ghost_name] then
+        builder.build(entity)
     end
+
+    -- Also migrate legacy blueprints when placed.
+    local migration_data = migrator.should_migrate(entity)
+    if migration_data then migrator.migrate(entity, migration_data) end
 end
 
 builder.events = {
