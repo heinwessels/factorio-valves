@@ -107,26 +107,26 @@ end
 ---@param event EventData.on_robot_built_entity|EventData.on_built_entity|EventData.script_raised_built|EventData.script_raised_revive
 local function on_entity_created(event)
     local entity = event.entity
-    if entity and entity.valid then
-        local player = event.player_index and game.get_player(event.player_index) or nil
-        if handler_for_name[entity.name] then
-            handle_possible_bad_connection(player, entity, handler_for_name[entity.name])
-        elseif entity.name == "entity-ghost" and handler_for_name[entity.ghost_name] then
-            handle_possible_bad_connection(player, entity, handler_for_name[entity.ghost_name])
-        end
+    if not (entity and entity.valid) then return end
+
+    local player = event.player_index and game.get_player(event.player_index) or nil
+    if handler_for_name[entity.name] then
+        handle_possible_bad_connection(player, entity, handler_for_name[entity.name])
+    elseif entity.name == "entity-ghost" and handler_for_name[entity.ghost_name] then
+        handle_possible_bad_connection(player, entity, handler_for_name[entity.ghost_name])
     end
 end
 
 ---@param event EventData.on_player_rotated_entity
 local function on_player_rotated_entit(event)
     local entity = event.entity
-    if entity and entity.valid then
-        local player = game.get_player(event.player_index) ---@cast player -?
-        if handler_for_name[entity.name] then
-            handle_possible_bad_connection(player, entity, handler_for_name[entity.name])
-        elseif entity.name == "entity-ghost" and handler_for_name[entity.ghost_name] then
-            handle_possible_bad_connection(player, entity, handler_for_name[entity.ghost_name])
-        end
+    if not (entity and entity.valid) then return end
+
+    local player = game.get_player(event.player_index) ---@cast player -?
+    if handler_for_name[entity.name] then
+        handle_possible_bad_connection(player, entity, handler_for_name[entity.name])
+    elseif entity.name == "entity-ghost" and handler_for_name[entity.ghost_name] then
+        handle_possible_bad_connection(player, entity, handler_for_name[entity.ghost_name])
     end
 end
 
