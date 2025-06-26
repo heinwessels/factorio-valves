@@ -2,7 +2,7 @@
 
 [![shield](https://img.shields.io/badge/Ko--fi-Donate%20-hotpink?logo=kofi&logoColor=white)](https://ko-fi.com/stringweasel) [![shield](https://img.shields.io/badge/dynamic/json?color=orange&label=Factorio&query=downloads_count&suffix=%20downloads&url=https%3A%2F%2Fmods.factorio.com%2Fapi%2Fmods%2Fvalves)](https://mods.factorio.com/mod/valves)
 
-Fully functioning overflow, top-up and one-way(check) as separate entities. The thresholds can be configured using shortcuts.
+Fully functioning overflow, top-up and one-way(check) as separate entities with animations. The thresholds can be configured using shortcuts.
 
 ## Shortcuts (configurable)
 - **Numpad +**: Increase threshold for overflow or top-up valves.
