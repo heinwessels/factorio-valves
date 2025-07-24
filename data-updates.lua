@@ -7,7 +7,9 @@ based on the check valve, but still pull the recipe from the overflow
 valve for balance reasons.
 ]]--
 
-local constants = require("__valves__.constants")
+local valves = data.raw["mod-data"]["mod-valves"].data.valves
+---@cast valves table<string, data.ValvesModValveConfig>
+assert(valves, "Failed to find mod-valves data")
 
 ---@type string
 local base_recipe_item
@@ -23,16 +25,18 @@ end
 ---@type data.TechnologyPrototype?
 local tech_to_unlock
 for _, technology in pairs(data.raw.technology) do
-    if technology.effects then			
+    if technology.effects then
         for index, effect in pairs(technology.effects) do
             if effect.type == "unlock-recipe" then
                 if effect.recipe == base_tech_item then
                   tech_to_unlock = technology
-                  for valve_type in pairs(constants.valve_types) do
-                    table.insert(tech_to_unlock.effects, index, {
-                      type = "unlock-recipe",
-                      recipe = "valves-"..valve_type
-                    })
+                  for valve_name, valve_config in pairs(valves) do
+                    if not valve_config.ignore_techs then
+                      table.insert(tech_to_unlock.effects, index, {
+                        type = "unlock-recipe",
+                        recipe = valve_name
+                      })
+                    end
                   end
                   break
                 end
@@ -62,8 +66,10 @@ if data.raw["item"]["pump"] then
   item_sub_group = data.raw["item"]["pump"].subgroup
 end
 
-for valve_type in pairs(constants.valve_types) do
-  data.raw.recipe["valves-"..valve_type].enabled = tech_to_unlock == nil
-  data.raw.recipe["valves-"..valve_type].ingredients = ingredients
-  data.raw.item["valves-"..valve_type].subgroup = item_sub_group
+for valve_name, valve_config in pairs(valves) do
+  if not valve_config.ignore_techs then
+    data.raw.recipe[valve_name].enabled = tech_to_unlock == nil
+    data.raw.recipe[valve_name].ingredients = ingredients
+    data.raw.item[valve_name].subgroup = item_sub_group
+  end
 end

@@ -3,11 +3,15 @@ local constants = require("__valves__.constants")
 
 local migrator = { }
 
+---Valve types that we support based on the old way that I
+---defined them.
+---@alias MyValveType "overflow" | "top_up" | "one_way"
+
 ---The get threshold function should return a number between 0 and 1, or nil if it doesn't exist.
----@alias GetThresholdFunction fun(entity: LuaEntity, name: string, valve_type: ValveType): number?
+---@alias GetThresholdFunction fun(entity: LuaEntity, name: string, valve_type: MyValveType): number?
 
 ---@class MigrationData
----@field valve_type ValveType
+---@field valve_type MyValveType
 ---@field get_threshold GetThresholdFunction
 ---@field invert_direction boolean?
 
@@ -43,7 +47,7 @@ function migrator.should_migrate(entity)
 end
 
 ---@param old_valve LuaEntity
----@param valve_type ValveType
+---@param valve_type MyValveType
 ---@return LuaEntity? new_valve
 function migrator.replace_valve_entity(old_valve, valve_type)
     local surface = old_valve.surface

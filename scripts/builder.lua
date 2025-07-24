@@ -4,9 +4,9 @@ local migrator = require("__valves__.scripts.migrator")
 local builder = { }
 
 ---@param valve LuaEntity
-function builder.build(valve)
-    local valve_type = constants.valve_name_to_type[valve.name]
-    if valve_type ~= "overflow" or valve_type ~= "top_up" then return end
+---@param valve_config ValveConfig
+function builder.build(valve, valve_config)
+    if valve_config.valve_mode ~= "overflow" and valve_config.valve_mode ~= "top-up" then return end
 
     -- We will set the valve's current threshold as the override
     -- threshold. That way if the player ever changes their default
@@ -15,15 +15,25 @@ function builder.build(valve)
     valve.valve_threshold_override = valve.valve_threshold_override
 end
 
+---@param entity LuaEntity
+---@return ValveConfig?
+function builder.get_useful_valve_config(entity)
+    local valve_config = constants.valves[entity.name]
+    if valve_config then return valve_config end
+
+    if entity.name ~= "entity-ghost" then return end
+    valve_config = constants.valves[entity.ghost_name]
+    if valve_config then return valve_config end
+end
+
 ---@param event EventData.on_robot_built_entity|EventData.on_built_entity|EventData.script_raised_built|EventData.script_raised_revive
 local function on_entity_created(event)
     local entity = event.entity
     if not (entity and entity.valid) then return end
 
-    if constants.valve_name_to_type[entity.name] then
-        builder.build(entity)
-    elseif entity.name == "entity-ghost" and constants.valve_name_to_type[entity.ghost_name] then
-        builder.build(entity)
+    local valve_config = builder.get_useful_valve_config(entity)
+    if valve_config then
+        builder.build(entity, valve_config)
     end
 
     -- Also migrate legacy blueprints when placed.

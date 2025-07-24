@@ -1,37 +1,20 @@
 local constants = { }
 
----@alias ValveType "overflow" | "top_up" | "one_way"
+---@class ValveConfig : data.ValvesModValveConfig
+---@field valve_mode ValveMode
+---@field default_threshold float based on the prototype
 
----@type table<ValveType, boolean>
-constants.valve_types = {
-    overflow    = true,
-    top_up      = true,
-    one_way     = true,
-}
+---@type table<string, ValveConfig>
+---@diagnostic disable-next-line: assign-type-mismatch
+constants.valves = prototypes.mod_data["mod-valves"].data.valves
 
----@type table<string, ValveType>
-constants.valve_name_to_type = { }
-for valve_type in pairs(constants.valve_types) do
-    constants.valve_name_to_type["valves-"..valve_type] = valve_type
-end
-
----@type table<string, ValveType>
-constants.setting_to_valve_type = { }
-for valve_type in pairs(constants.valve_types) do
-    if valve_type ~= "one_way" then
-        constants.setting_to_valve_type["valves-default-threshold-"..valve_type] = valve_type
-    end
-end
-
-if prototypes and script then
-    -- We're in runtime! Store the default values
-    ---@type table<ValveType, number>
-    constants.default_thresholds = { }
-    for valve_type in pairs(constants.valve_types) do
-        if valve_type == "one_way" then goto continue end
-        local threshold = prototypes.entity["valves-"..valve_type].valve_threshold
-        constants.default_thresholds[valve_type] = threshold
-        ::continue::
+--- Fill in the information for each valve
+for valve_name, valve_config in pairs(constants.valves) do
+    local prototype = prototypes.entity[valve_name]
+    assert(prototype, "Failed to find prototype for: "..valve_name)
+    valve_config.valve_mode = prototype.valve_mode
+    if valve_config.valve_mode ~= "one-way" then
+        valve_config.default_threshold = prototype.valve_threshold
     end
 end
 

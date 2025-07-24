@@ -3,9 +3,7 @@ local item_tints = require("__base__.prototypes.item-tints")
 local hit_effects = require("__base__.prototypes.entity.hit-effects")
 local sounds = require("__base__.prototypes.entity.sounds")
 
-local constants = require("__valves__.constants")
-
-local to_vanilla_mode = {
+local valve_type_to_vanilla_mapping = {
   ["overflow"] = "overflow",
   ["top_up"] = "top-up",
   ["one_way"] = "one-way",
@@ -18,8 +16,8 @@ local function create_valve(valve_type)
     threshold = settings.startup["valves-default-threshold-"..valve_type].value /  100
   end
 
-  local factoriopeda_description = {"", 
-    {"entity-description."..to_vanilla_mode[valve_type].."-valve"}
+  local factoriopeda_description = {"",
+    {"entity-description."..valve_type_to_vanilla_mapping[valve_type].."-valve"}
   }
   if valve_type ~= "one_way" then
     table.insert(factoriopeda_description, {"valves.valve-shortcuts"})
@@ -54,13 +52,13 @@ local function create_valve(valve_type)
         icon = "__valves__/graphics/"..valve_type.."/icon.png",
         flags = {"placeable-neutral", "player-creation", "hide-alt-info"},
         localised_description = {"",
-          {"entity-description."..to_vanilla_mode[valve_type].."-valve"},
+          {"entity-description."..valve_type_to_vanilla_mapping[valve_type].."-valve"},
           " ",
           {"valves.more-in-factoriopedia"},
         },
         factoriopedia_description = factoriopeda_description,
         minable = {mining_time = 0.2, result = name},
-        mode = to_vanilla_mode[valve_type],
+        mode = valve_type_to_vanilla_mapping[valve_type],
         threshold = threshold,
         max_health = 180,
         fast_replaceable_group = "pipe",
@@ -203,6 +201,6 @@ local function create_valve(valve_type)
   }
 end
 
-for valve_type in pairs(constants.valve_types) do
+for valve_type in pairs(valve_type_to_vanilla_mapping) do
   create_valve(valve_type)
 end

@@ -5,7 +5,7 @@
 -- https://mods.factorio.com/mod/configurable-valves/discussion/687adff5090859d1e32f130e
 
 local max_fluid_flow = data.raw["utility-constants"]["default"].max_fluid_flow
-for valve_name in pairs(require("constants").valve_name_to_type) do
+for valve_name in pairs(data.raw["mod-data"]["mod-valves"].data.valves --[[@as table]]) do
     assert(data.raw.valve[valve_name], "Valve '" .. valve_name .. "' not found in data.raw.valve")
     local valve = data.raw.valve[valve_name]
     valve.flow_rate = math.min(valve.flow_rate, max_fluid_flow)

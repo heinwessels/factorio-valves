@@ -3,6 +3,8 @@ Version: 2.1.0
 Date: ??.??.2025
   Changes:
     - Limit valve pump speed in mod settings to the `max_fluid_flow` utility constant.
+  Compatibility:
+    - Allow other mods to add their own valves using the new `mod-data` mechanic.
 ---------------------------------------------------------------------------------------------------
 Version: 2.0.6
 Date: 26.06.2025

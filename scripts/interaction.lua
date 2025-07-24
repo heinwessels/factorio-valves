@@ -1,4 +1,5 @@
 local constants = require("__valves__.constants")
+local builder = require("__valves__.scripts.builder")
 
 ---@class ThresholdRendering
 ---@field render_object LuaRenderObject
@@ -45,16 +46,14 @@ local function on_selected_entity_changed(event)
 
     local entity = player.selected
     if not (entity and entity.valid) then return end
-    local valve_name = entity.name == "entity-ghost" and entity.ghost_name or entity.name
-    if not valve_name then return end
-    local valve_type = constants.valve_name_to_type[valve_name]
-    if not valve_type then return end
-    if valve_type == "one_way" then return end -- Doesn't have a threshold
-    local threshold = entity.valve_threshold_override or constants.default_thresholds[valve_type]
+    local valve_config = builder.get_useful_valve_config(entity)
+    if not valve_config then return end
+    if valve_config.valve_mode == "one-way" then return end -- Doesn't have a threshold
+    local threshold = entity.valve_threshold_override or valve_config.default_threshold
 
     player_data.render_threshold = {
         valve = entity,
-        default_threshold = constants.default_thresholds[valve_type],
+        default_threshold = threshold,
         render_object = rendering.draw_text{
             text = format_threshold(threshold),
             surface = entity.surface,
@@ -75,17 +74,15 @@ local function quick_toggle(input, event)
     if not player then return end
     local valve = player.selected
     if not valve then return end
-    local valve_name = valve.name == "entity-ghost" and valve.ghost_name or valve.name
-    if not valve_name then return end
-    local valve_type = constants.valve_name_to_type[valve_name]
-    if not valve_type then return end
+    local valve_config = builder.get_useful_valve_config(valve)
+    if not valve_config then return end
 
-    if valve_type == "one_way" then
+    if valve_config.valve_mode == "one-way" then
         player.create_local_flying_text{text = {"valves.configuration-doesnt-support-thresholds"}, create_at_cursor=true}
         return
     end
 
-    local threshold = valve.valve_threshold_override or constants.default_thresholds[valve_type]
+    local threshold = valve.valve_threshold_override or valve_config.default_threshold
     threshold = threshold + (0.1 * (input == "plus" and 1 or -1 ))  -- Adjust
     threshold = math.min(1, math.max(0, threshold))                 -- Clamp
     threshold = math.floor(threshold * 10 + 0.5) / 10               -- Round
