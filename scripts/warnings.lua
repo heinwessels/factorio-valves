@@ -61,7 +61,7 @@ end
 ---@param pump LuaEntity
 ---@return boolean? true if the pump's input is connected to a valves's output
 local function pump_has_bad_connection(pump)
-    local valve_fluidbox = fluidbox_is_connected_to(pump.fluidbox, "input", {names = constants.valve_names})
+    local valve_fluidbox = fluidbox_is_connected_to(pump.fluidbox, "input", {names = constants.valve_name_to_type})
     if not valve_fluidbox then return end -- Not connected to a valve
     -- Now ensure we're connected to the valve's _input_
     return fluidbox_is_connected_to(valve_fluidbox, "output", {entity = pump}) ~= nil
@@ -69,7 +69,7 @@ end
 
 -- Generate nice handlers for all our valves and all pumps when might need to deal with.
 local handler_for_name = { }
-for valve_name, _ in pairs(constants.valve_names) do
+for valve_name, _ in pairs(constants.valve_name_to_type) do
     handler_for_name[valve_name] = valve_has_bad_connection
 end
 for pump_name, prototype in pairs(prototypes.get_entity_filtered({{filter = "type", type = "pump"}})) do
@@ -134,15 +134,15 @@ end
 ---@return LuaEntity[]
 local function find_all_bad_connections(force)
     ---@type string[]
-    local valve_names_list = {}
-    for name, _ in pairs(constants.valve_names) do
-        table.insert(valve_names_list, name)
+    local valve_name_to_type_list = {}
+    for name, _ in pairs(constants.valve_name_to_type) do
+        table.insert(valve_name_to_type_list, name)
     end
 
     ---@type LuaEntity[]
     local bad_valves = {}
     for _, surface in pairs(game.surfaces) do
-        for _, valve in pairs(surface.find_entities_filtered({name = valve_names_list, force = force})) do
+        for _, valve in pairs(surface.find_entities_filtered({name = valve_name_to_type_list, force = force})) do
             if valve_has_bad_connection(valve) then
                 table.insert(bad_valves, valve)
             end

@@ -1,5 +1,7 @@
 local constants = { }
 
+---@alias ValveType "overflow" | "top_up" | "one_way"
+
 ---@type table<ValveType, boolean>
 constants.valve_types = {
     overflow    = true,
@@ -8,9 +10,9 @@ constants.valve_types = {
 }
 
 ---@type table<string, ValveType>
-constants.valve_names = { }
+constants.valve_name_to_type = { }
 for valve_type in pairs(constants.valve_types) do
-    constants.valve_names["valves-"..valve_type] = valve_type
+    constants.valve_name_to_type["valves-"..valve_type] = valve_type
 end
 
 ---@type table<string, ValveType>

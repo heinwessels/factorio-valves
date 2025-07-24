@@ -5,7 +5,7 @@ local builder = { }
 
 ---@param valve LuaEntity
 function builder.build(valve)
-    local valve_type = constants.valve_names[valve.name]
+    local valve_type = constants.valve_name_to_type[valve.name]
     if valve_type ~= "overflow" or valve_type ~= "top_up" then return end
 
     -- We will set the valve's current threshold as the override
@@ -20,9 +20,9 @@ local function on_entity_created(event)
     local entity = event.entity
     if not (entity and entity.valid) then return end
 
-    if constants.valve_names[entity.name] then
+    if constants.valve_name_to_type[entity.name] then
         builder.build(entity)
-    elseif entity.name == "entity-ghost" and constants.valve_names[entity.ghost_name] then
+    elseif entity.name == "entity-ghost" and constants.valve_name_to_type[entity.ghost_name] then
         builder.build(entity)
     end
 

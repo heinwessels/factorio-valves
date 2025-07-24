@@ -47,7 +47,7 @@ local function on_selected_entity_changed(event)
     if not (entity and entity.valid) then return end
     local valve_name = entity.name == "entity-ghost" and entity.ghost_name or entity.name
     if not valve_name then return end
-    local valve_type = constants.valve_names[valve_name]
+    local valve_type = constants.valve_name_to_type[valve_name]
     if not valve_type then return end
     if valve_type == "one_way" then return end -- Doesn't have a threshold
     local threshold = entity.valve_threshold_override or constants.default_thresholds[valve_type]
@@ -77,7 +77,7 @@ local function quick_toggle(input, event)
     if not valve then return end
     local valve_name = valve.name == "entity-ghost" and valve.ghost_name or valve.name
     if not valve_name then return end
-    local valve_type = constants.valve_names[valve_name]
+    local valve_type = constants.valve_name_to_type[valve_name]
     if not valve_type then return end
 
     if valve_type == "one_way" then
