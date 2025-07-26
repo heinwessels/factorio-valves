@@ -13,6 +13,7 @@ local function create_valve(valve_type)
   local name = "valves-"..valve_type
   local threshold = nil
   if valve_type == "overflow" or valve_type == "top_up" then
+    -- Note: this will be overwritten during data-final-fixes anyway
     threshold = settings.startup["valves-default-threshold-"..valve_type].value /  100
   end
 

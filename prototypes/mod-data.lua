@@ -17,7 +17,8 @@
 
 ---@class data.ValvesModValveConfig
 ---@field name string name of the entity
----@field ignore_techs? boolean if true the valves mod will not interfere with the tech tree regarding these valve prototypes
+---@field ignore_techs boolean? if true the valves mod will not interfere with the tech tree regarding these valve prototypes
+---@field threshold_visualization_scale float? to apply to the threshold visualization number, default is 1.0
 
 data:extend{
     {

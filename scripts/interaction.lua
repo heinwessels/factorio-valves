@@ -59,7 +59,7 @@ local function on_selected_entity_changed(event)
             surface = entity.surface,
             target = entity,
             color = {1, 1, 1, 0.8},
-            scale = 1.5,
+            scale = 1.5 * (valve_config.threshold_visualization_scale or 1.0),
             vertical_alignment = "middle",
             players = { player },
             alignment = "center",
