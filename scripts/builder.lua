@@ -1,4 +1,4 @@
-local constants = require("__valves__.constants")
+local config = require("__valves__.config")
 local migrator = require("__valves__.scripts.migrator")
 
 local builder = { }
@@ -18,11 +18,11 @@ end
 ---@param entity LuaEntity
 ---@return ValveConfig?
 function builder.get_useful_valve_config(entity)
-    local valve_config = constants.valves[entity.name]
+    local valve_config = config.valves[entity.name]
     if valve_config then return valve_config end
 
     if entity.name ~= "entity-ghost" then return end
-    valve_config = constants.valves[entity.ghost_name]
+    valve_config = config.valves[entity.ghost_name]
     if valve_config then return valve_config end
 end
 

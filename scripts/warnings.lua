@@ -1,4 +1,4 @@
-local constants = require("constants")
+local config = require("config")
 
 -- This functionionality is to warn the player that there is unintended behaviour
 -- when a valve's output is connected to a pump's input. In this scenario the pump
@@ -61,7 +61,7 @@ end
 ---@param pump LuaEntity
 ---@return boolean? true if the pump's input is connected to a valves's output
 local function pump_has_bad_connection(pump)
-    local valve_fluidbox = fluidbox_is_connected_to(pump.fluidbox, "input", {names = constants.valves})
+    local valve_fluidbox = fluidbox_is_connected_to(pump.fluidbox, "input", {names = config.valves})
     if not valve_fluidbox then return end -- Not connected to a valve
     -- Now ensure we're connected to the valve's _input_
     return fluidbox_is_connected_to(valve_fluidbox, "output", {entity = pump}) ~= nil
@@ -69,7 +69,7 @@ end
 
 -- Generate nice handlers for all our valves and all pumps when might need to deal with.
 local handler_for_name = { }
-for valve_name, _ in pairs(constants.valves) do
+for valve_name, _ in pairs(config.valves) do
     handler_for_name[valve_name] = valve_has_bad_connection
 end
 for pump_name, prototype in pairs(prototypes.get_entity_filtered({{filter = "type", type = "pump"}})) do
@@ -135,7 +135,7 @@ end
 local function find_all_bad_connections(force)
     ---@type string[]
     local valve_name_to_type_list = {}
-    for name, _ in pairs(constants.valves) do
+    for name, _ in pairs(config.valves) do
         table.insert(valve_name_to_type_list, name)
     end
 

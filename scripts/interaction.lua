@@ -1,4 +1,4 @@
-local constants = require("__valves__.constants")
+local config = require("__valves__.config")
 local builder = require("__valves__.scripts.builder")
 
 ---@class ThresholdRendering

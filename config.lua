@@ -1,4 +1,4 @@
-local constants = { }
+local config = { }
 
 ---@class ValveConfig : data.ValvesModValveConfig
 ---@field valve_mode ValveMode
@@ -6,10 +6,10 @@ local constants = { }
 
 ---@type table<string, ValveConfig>
 ---@diagnostic disable-next-line: assign-type-mismatch
-constants.valves = prototypes.mod_data["mod-valves"].data.valves
+config.valves = prototypes.mod_data["mod-valves"].data.valves
 
 --- Fill in the information for each valve
-for valve_name, valve_config in pairs(constants.valves) do
+for valve_name, valve_config in pairs(config.valves) do
     local prototype = prototypes.entity[valve_name]
     assert(prototype, "Failed to find prototype for: "..valve_name)
     valve_config.valve_mode = prototype.valve_mode
@@ -18,4 +18,4 @@ for valve_name, valve_config in pairs(constants.valves) do
     end
 end
 
-return constants
+return config
