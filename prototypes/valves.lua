@@ -17,15 +17,6 @@ local function create_valve(valve_type)
     threshold = settings.startup["valves-default-threshold-"..valve_type].value /  100
   end
 
-  local factoriopeda_description = {"",
-    {"entity-description."..valve_type_to_vanilla_mapping[valve_type].."-valve"}
-  }
-  if valve_type ~= "one_way" then
-    table.insert(factoriopeda_description, {"valves.valve-shortcuts"})
-    table.insert(factoriopeda_description, {"valves.threshold-settings"})
-  end
-  table.insert(factoriopeda_description, {"valves.factoriopedia-bad-connections"})
-
   data:extend{
       {
         type = "item",
@@ -52,12 +43,6 @@ local function create_valve(valve_type)
         name = name,
         icon = "__valves__/graphics/"..valve_type.."/icon.png",
         flags = {"placeable-neutral", "player-creation", "hide-alt-info"},
-        localised_description = {"",
-          {"entity-description."..valve_type_to_vanilla_mapping[valve_type].."-valve"},
-          " ",
-          {"valves.more-in-factoriopedia"},
-        },
-        factoriopedia_description = factoriopeda_description,
         minable = {mining_time = 0.2, result = name},
         mode = valve_type_to_vanilla_mapping[valve_type],
         threshold = threshold,

@@ -9,6 +9,21 @@ for valve_name in pairs(data.raw["mod-data"]["mod-valves"].data.valves --[[@as t
     local valve = data.raw.valve[valve_name]
     assert(valve, "Valve '" .. valve_name .. "' not found in data.raw.valve")
 
+    -- Add a nice description and Factoriopedia page to describe the shortcuts and shortcomings.
+    local factoriopeda_description = {"", {"entity-description."..valve.mode.."-valve"}}
+    if valve.mode ~= "one-way" then
+        table.insert(factoriopeda_description, {"valves.valve-shortcuts"})
+        table.insert(factoriopeda_description, {"valves.threshold-settings"})
+    end
+    table.insert(factoriopeda_description, {"valves.factoriopedia-bad-connections"})
+    valve.factoriopedia_description = factoriopeda_description
+    valve.localised_description = {"",
+        {"entity-description."..valve.mode.."-valve"},
+        " ",
+        {"valves.more-in-factoriopedia"},
+    }
+
+
     -- If the utility constant `max_fluid_flow` is higher than the "pump" speed then it will
     -- then it will look like the valve is not pumping at full capacity. So instead we will
     -- just cap the pump speed to the maximum fluid flow.
