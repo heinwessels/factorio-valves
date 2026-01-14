@@ -2,26 +2,20 @@ local item_sounds = require("__base__.prototypes.item_sounds")
 local item_tints = require("__base__.prototypes.item-tints")
 local hit_effects = require("__base__.prototypes.entity.hit-effects")
 local sounds = require("__base__.prototypes.entity.sounds")
+local config = require("config")
 
-local valve_type_to_vanilla_mapping = {
-  ["overflow"] = "overflow",
-  ["top_up"] = "top-up",
-  ["one_way"] = "one-way",
-}
-
-local function create_valve(valve_type)
-  local name = "valves-"..valve_type
+local function create_valve(name, valve_config)
   local threshold = nil
-  if valve_type == "overflow" or valve_type == "top_up" then
+  if valve_config.type == "overflow" or valve_config.type == "top_up" then
     -- Note: this will be overwritten during data-final-fixes anyway
-    threshold = settings.startup["valves-default-threshold-"..valve_type].value /  100
+    threshold = settings.startup["valves-default-threshold-"..valve_config.type].value / 100
   end
 
   data:extend{
       {
         type = "item",
         name = name,
-        icon = "__valves__/graphics/"..valve_type.."/icon.png",
+        icon = "__valves__/graphics/"..valve_config.type.."/icon.png",
         subgroup = "energy-pipe-distribution",
         order = "b[pipe]-d["..name.."]",
         inventory_move_sound = item_sounds.fluid_inventory_move,
@@ -41,10 +35,10 @@ local function create_valve(valve_type)
       {
         type = "valve",
         name = name,
-        icon = "__valves__/graphics/"..valve_type.."/icon.png",
+        icon = "__valves__/graphics/"..valve_config.type.."/icon.png",
         flags = {"placeable-neutral", "player-creation", "hide-alt-info"},
         minable = {mining_time = 0.2, result = name},
-        mode = valve_type_to_vanilla_mapping[valve_type],
+        mode = valve_config.mode,
         threshold = threshold,
         max_health = 180,
         fast_replaceable_group = "pipe",
@@ -90,7 +84,7 @@ local function create_valve(valve_type)
           {
             layers = {
               {
-                filename = "__valves__/graphics/"..valve_type.."/north.png",
+                filename = "__valves__/graphics/"..valve_config.type.."/north.png",
                 width = 128,
                 height = 128,
                 scale = 0.5,
@@ -114,7 +108,7 @@ local function create_valve(valve_type)
           {
             layers = {
               {
-                filename = "__valves__/graphics/"..valve_type.."/east.png",
+                filename = "__valves__/graphics/"..valve_config.type.."/east.png",
                 width = 128,
                 height = 128,
                 scale = 0.5,
@@ -138,7 +132,7 @@ local function create_valve(valve_type)
           {
             layers = {
               {
-                filename = "__valves__/graphics/"..valve_type.."/south.png",
+                filename = "__valves__/graphics/"..valve_config.type.."/south.png",
                 width = 128,
                 height = 128,
                 scale = 0.5,
@@ -162,7 +156,7 @@ local function create_valve(valve_type)
           {
             layers = {
               {
-                filename = "__valves__/graphics/"..valve_type.."/west.png",
+                filename = "__valves__/graphics/"..valve_config.type.."/west.png",
                 width = 128,
                 height = 128,
                 scale = 0.5,
@@ -187,6 +181,6 @@ local function create_valve(valve_type)
   }
 end
 
-for valve_type in pairs(valve_type_to_vanilla_mapping) do
-  create_valve(valve_type)
+for valve_name, valve_config in pairs(config.valves) do
+  create_valve(valve_name, valve_config)
 end

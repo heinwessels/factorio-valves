@@ -5,6 +5,8 @@ overflow/underflow valves. Otherwise we are equivalent to a pump.
 Since the fancy Py valves are currently disabled, we pick the tech
 based on the check valve, but still pull the recipe from the overflow
 valve for balance reasons.
+
+NOTE: This file is hacky, and has code that has to be in valves-lib. Meh.
 ]]--
 
 local valves = data.raw["mod-data"]["mod-valves"].data.valves

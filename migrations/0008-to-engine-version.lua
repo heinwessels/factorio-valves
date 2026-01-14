@@ -8,7 +8,7 @@ end
 storage.players = { }
 
 --- Now migrate all old legacy valves to the new engine-supported ones.
-local migrator = require("__valves__/scripts/migrator")
+local migrator = require("__valves-lib__/scripts/migrator")
 ---@type string[]
 local legacy_name_to_type = {"valves-overflow-legacy", "valves-top_up-legacy", "valves-one_way-legacy"}
 

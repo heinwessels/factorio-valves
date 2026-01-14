@@ -16,7 +16,7 @@ Fully functioning overflow, top-up and one-way(check) as separate entities with 
 Should be comptatibile with most mods. If it's not compatible, please let me know.
 - **Pyanodons**: Will automatically migrate old Factorio 1.1 valves to their 2.0 counter part.
 
-It's also possible for other modders to hook their own valve prototypes into this Valves mod. Then this mod will manage your custom mod's thresholds, show it on entity selected, show warnings, etc. See the [mod-data.lua](https://github.com/heinwessels/factorio-valves/blob/master/prototypes/mod-data.lua) for more information.
+It's also possible for other modders to hook their own valves with this functionality. See [Valves Library](https://mods.factorio.com/mod/valves-lib).
 
 ## Limitation with Pumps
 A valve's output cannot be connected to a pump's input, regardless of valve type. Due to a game engine limitation the pump will bypass the valve as if it's not there. The [one image in the gallery](https://assets-mod.factorio.com/assets/316cf62d974334fdc45e1fe82ef87192ba9d3b25.png) shows the different pump connections. You can check for bad valve connections in game at any point using `/valves-find-bad-connections`.
