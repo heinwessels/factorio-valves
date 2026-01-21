@@ -14,7 +14,14 @@ Fully functioning overflow, top-up and one-way(check) as separate entities with 
 
 ## Compatibility
 Should be comptatibile with most mods. If it's not compatible, please let me know.
-- **Pyanodons**: Will automatically migrate old Factorio 1.1 valves to their 2.0 counter part.
+- **Pyanodons**: Will automatically migrate Pyanodon's valves to this mod's valves.
+- **Bob's Logistics**: When migrating a 1.1 save will automatically migrate old Bobs valves to this mod's valves.
+- **Angel's 's Petrochemical Processing**: When migrating a 1.1 save will automatically migrate old Angel's valves to this mod's valves.
+
+If you want custom thresholds but keep another mod's valves, there are these mods available:
+- [Valves: Angel's Adjustable Thresholds](https://mods.factorio.com/mod/valves-angels)
+- [Valves: Bobs's Adjustable Thresholds](https://mods.factorio.com/mod/valves-bobs)
+- [Valves: Pyanodons's Adjustable Thresholds](https://mods.factorio.com/mod/valves-py)
 
 It's also possible for other modders to hook their own valves with this functionality. See [Valves Library](https://mods.factorio.com/mod/valves-lib).
 
