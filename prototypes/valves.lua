@@ -3,6 +3,7 @@ local item_tints = require("__base__.prototypes.item-tints")
 local hit_effects = require("__base__.prototypes.entity.hit-effects")
 local sounds = require("__base__.prototypes.entity.sounds")
 local config = require("config")
+require ("__base__.prototypes.entity.pipecovers")
 
 local function create_valve(name, valve_config)
   local threshold = nil
